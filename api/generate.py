@@ -83,7 +83,7 @@ def generate_question_paper(
         class_=blueprint.class_,
         subject=blueprint.subject,
         difficulty=blueprint.difficulty,
-        marks_json=json.dumps(blueprint.marks, indent=2),
+        marks_json=json.dumps({k: v.model_dump() for k, v in blueprint.marks.items()}, indent=2),
         context=context
     )
 
@@ -101,25 +101,24 @@ def generate_question_paper(
     with open(f"{out}/question_paper.json", "w", encoding="utf-8") as f:
         json.dump(paper, f, indent=2)
 
-    # ---------- ANSWER KEY ----------
-    answer_prompt = ANSWER_KEY_PROMPT.format(
-        paper_json=json.dumps(paper, indent=2),
-        context=context
-    )
+    # # ---------- ANSWER KEY ----------
+    # answer_prompt = ANSWER_KEY_PROMPT.format(
+    #     paper_json=json.dumps(paper, indent=2),
+    #     context=context
+    # )
 
-    answer_response = llm.invoke(answer_prompt)
+    # answer_response = llm.invoke(answer_prompt)
 
-    try:
-        answers = json.loads(answer_response.content)
-    except Exception:
-        raise HTTPException(500, "Invalid answer key JSON")
+    # try:
+    #     answers = json.loads(answer_response.content)
+    # except Exception:
+    #     raise HTTPException(500, "Invalid answer key JSON")
 
-    with open(f"{out}/answer_key.json", "w", encoding="utf-8") as f:
-        json.dump(answers, f, indent=2)
+    # with open(f"{out}/answer_key.json", "w", encoding="utf-8") as f:
+    #     json.dump(answers, f, indent=2)
 
     return {
         "question_paper": paper,
-        "answer_key": answers
     }
 
 
