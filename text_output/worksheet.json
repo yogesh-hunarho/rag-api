@@ -1,0 +1,70 @@
+{
+  "fill_in_the_blanks": [
+    {
+      "question": "Everything in this universe is made up of material which scientists have named \"_______\"."
+    },
+    {
+      "question": "All the things mentioned above occupy _______ and have _______."
+    },
+    {
+      "question": "Early Indian philosophers classified matter in the form of five basic elements — the \"_______\" — air, earth, fire, sky and water."
+    },
+    {
+      "question": "Modern day scientists have evolved two types of classification of matter based on their _______ properties and _______ nature."
+    },
+    {
+      "question": "Due to its high compressibility, large volumes of a gas can be compressed into a _______ cylinder and transported easily."
+    },
+    {
+      "question": "The arrangement of particles is most ordered in the case of _______."
+    },
+    {
+      "question": "_______ is the change of solid state directly to gaseous state without going through liquid state."
+    }
+  ],
+  "true_false": [
+    {
+      "statement": "Everything in this universe is made up of material which scientists have named 'matter'."
+    },
+    {
+      "statement": "Early Indian philosophers classified matter into three basic elements."
+    },
+    {
+      "statement": "Modern day scientists classify matter based only on its physical properties."
+    },
+    {
+      "statement": "Compressed natural gas (CNG) is used as fuel in vehicles due to its high compressibility."
+    },
+    {
+      "statement": "In the gaseous state, the particles move about randomly at high speed."
+    },
+    {
+      "statement": "The arrangement of particles is most ordered in the case of liquids."
+    },
+    {
+      "statement": "Deposition is the change of gaseous state directly to solid state."
+    }
+  ],
+  "match_the_following": [
+    {
+      "column_A": "Matter",
+      "column_B": "Occupies space and has mass"
+    },
+    {
+      "column_A": "Panch Tatva",
+      "column_B": "Air, earth, fire, sky, water"
+    },
+    {
+      "column_A": "CNG",
+      "column_B": "Used as fuel due to high compressibility"
+    },
+    {
+      "column_A": "Sublimation",
+      "column_B": "Solid state directly to gaseous state"
+    },
+    {
+      "column_A": "Solids",
+      "column_B": "Most ordered particle arrangement"
+    }
+  ]
+}

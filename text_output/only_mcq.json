@@ -1,0 +1,236 @@
+[
+  {
+    "question": "What have scientists named the material everything in this universe is made up of?",
+    "options": [
+      "matter",
+      "air",
+      "food",
+      "stones"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "What do all the things mentioned above occupy and have?",
+    "options": [
+      "space and have mass",
+      "different shapes",
+      "different sizes",
+      "different textures"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "What do things that occupy space and have mass possess?",
+    "options": [
+      "both mass* and volume**",
+      "different shapes",
+      "different sizes",
+      "different textures"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "How did Early Indian philosophers classify matter?",
+    "options": [
+      "in the form of five basic elements — the “Panch Tatva” — air, earth, fire, sky and water",
+      "based on their physical properties",
+      "based on their chemical nature",
+      "as continuous like a block of wood"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "What did Ancient Greek philosophers arrive at regarding matter?",
+    "options": [
+      "a similar classification of matter",
+      "two types of classification of matter",
+      "matter to be continuous like a block of wood",
+      "matter was made up of particles like sand"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "What two types of classification of matter have modern day scientists evolved?",
+    "options": [
+      "based on their physical properties and chemical nature",
+      "in the form of five basic elements",
+      "as continuous like a block of wood",
+      "as made up of particles like sand"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "What were the two prevailing schools of thought regarding the nature of matter for a long time?",
+    "options": [
+      "One school believed matter to be continuous like a block of wood, whereas, the other thought that matter was made up of particles like sand.",
+      "Early Indian philosophers classified matter in the form of five basic elements.",
+      "Modern day scientists have evolved two types of classification of matter based on their physical properties and chemical nature.",
+      "Everything in this universe is made up of material which scientists have named “matter”."
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "medium",
+    "figure_reference": null
+  },
+  {
+    "question": "What does Fig. 1.2 illustrate?",
+    "options": [
+      "Estimating how small are the particles of matter.",
+      "Interconversion of the three states of matter",
+      "Put an inverted funnel over the china dish.",
+      "Put a cotton plug on the stem of the funnel"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": "Fig. 1.2"
+  },
+  {
+    "question": "How do you convert a temperature on the Celsius scale to the Kelvin scale?",
+    "options": [
+      "you have to add 273 to the given temperature",
+      "you have to subtract 273 from the given temperature",
+      "by changing the temperature",
+      "on application of heat"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "How do you convert a temperature on the Kelvin scale to the Celsius scale?",
+    "options": [
+      "have to subtract 273 from the given temperature",
+      "have to add 273 to the given temperature",
+      "by changing the temperature",
+      "on application of heat"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "What can we infer about the state of matter?",
+    "options": [
+      "the state of matter can be changed into another state by changing the temperature",
+      "substances around us change state from solid to liquid",
+      "substances around us change state from liquid to gas on application of heat",
+      "there are some that change directly from solid state to gaseous state"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "How do some substances change state directly from solid to gaseous state and vice versa?",
+    "options": [
+      "without changing into the liquid state",
+      "on application of heat",
+      "by changing the temperature",
+      "by putting pressure and compress a gas"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "medium",
+    "figure_reference": null
+  },
+  {
+    "question": "What is a change of state directly from solid to gas without changing into liquid state called?",
+    "options": [
+      "sublimation",
+      "deposition",
+      "change of state directly from solid to gas",
+      "change of gas to solid"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "What is the direct change of gas to solid without changing into liquid called?",
+    "options": [
+      "deposition",
+      "sublimation",
+      "change of state directly from solid to gas",
+      "change of gas to solid"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "What is the difference in various states of matter due to?",
+    "options": [
+      "the difference in the distances between the constituent particles",
+      "changing the temperature",
+      "application of heat",
+      "without changing into the liquid state"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "medium",
+    "figure_reference": null
+  },
+  {
+    "question": "What is solid carbon dioxide also known as?",
+    "options": [
+      "dry ice",
+      "matter",
+      "Panch Tatva",
+      "potassium permanganate"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": null
+  },
+  {
+    "question": "What determines the state of a substance, whether it will be solid, liquid or gas?",
+    "options": [
+      "pressure and temperature",
+      "physical properties and chemical nature",
+      "five basic elements",
+      "distances between the constituent particles"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "hard",
+    "figure_reference": null
+  },
+  {
+    "question": "What does Fig. 1.9 illustrate?",
+    "options": [
+      "Interconversion of the three states of matter",
+      "Estimating how small are the particles of matter.",
+      "Put an inverted funnel over the china dish.",
+      "Put a cotton plug on the stem of the funnel"
+    ],
+    "correct_index": 0,
+    "marks": 1,
+    "difficulty": "easy",
+    "figure_reference": "Fig. 1.9"
+  }
+]

@@ -310,4 +310,330 @@ UUID = security boundary
 
 ## 🏁 One-Line Pitch (Use This)
 
-> “We built a session-based RAG system that converts CBSE textbooks into structured, teacher-controlled educational content with zero permanent storage and optimized AI cost.”
+> “We built a session-based RAG system that converts CBSE textbooks into structured, teacher-controlled educational content with zero permanent storage and optimized AI cost.” below my code
+
+main.py
+from fastapi import FastAPI
+from api.session import router as session_router
+from api.generate import router as generate_router
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
+
+app = FastAPI(title="Paper Generator", version="1.0.0", description="NCERT Paper Generator", docs_url="/docs", redoc_url="/redoc", openapi_url="/openapi.json",)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+@app.get("/favicon.ico")
+def favicon():
+    return Response(status_code=204)
+
+app.include_router(session_router, prefix="/session")
+app.include_router(generate_router, prefix="/generate")
+
+<!-- generate.py -->
+from schemas.paper_blueprint import PaperBlueprint
+from fastapi import APIRouter, HTTPException
+from services.chunking import ContentType, chunk_text
+from services.vector_store import get_or_create_store
+from services.rag import get_context
+from services.prompts import *
+from services.llm import get_llm
+import json, os
+
+router = APIRouter()
+
+@router.post("/question_paper")
+def generate_question_paper(
+    session_id: str,
+    blueprint: PaperBlueprint
+):
+    base = f"tmp/sessions/{session_id}"
+    chapter_path = f"{base}/chapter.txt"
+
+    if not os.path.exists(chapter_path):
+        raise HTTPException(404, "Chapter not uploaded")
+
+    # Always read text files with explicit encoding (Windows-safe)
+    with open(chapter_path, "r", encoding="utf-8", errors="ignore") as f:
+        text = f.read()
+
+    if not text.strip():
+        raise HTTPException(400, "Extracted chapter text is empty")
+
+
+    chunks = chunk_text(text, ContentType.question_paper)
+    store = get_or_create_store(session_id, chunks)
+    context = get_context(store)
+
+    llm = get_llm()
+
+    prompt = QUESTION_PAPER_PROMPT.format(
+        class_=blueprint.class_,
+        subject=blueprint.subject,
+        difficulty=blueprint.difficulty,
+        marks_json=json.dumps({k: v.model_dump() for k, v in blueprint.marks.items()}, indent=2),
+        context=context
+    )
+
+    paper_response = llm.invoke(prompt)
+
+    try:
+        paper = json.loads(paper_response.content)
+    except Exception:
+        raise HTTPException(500, "Invalid question paper JSON")
+
+    # Save question paper
+    out = f"{base}/outputs"
+    os.makedirs(out, exist_ok=True)
+
+    with open(f"{out}/question_paper.json", "w", encoding="utf-8") as f:
+        json.dump(paper, f, indent=2)
+
+    return paper
+
+<!-- llm.py -->
+import os
+from langchain_google_genai import ChatGoogleGenerativeAI
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def get_llm():
+    return ChatGoogleGenerativeAI(
+        model="gemini-2.5-flash",
+        temperature=0.3,
+        google_api_key=os.getenv("GOOGLE_API_KEY"),
+        response_mime_type="application/json"
+    )
+
+<!-- rag.py -->
+def get_context(vector_store, k: int = 6):
+    docs = vector_store.similarity_search("NCERT content", k=k)
+    return "\n".join(d.page_content for d in docs)
+
+<!-- verctor_store.py -->
+import os
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
+from utils.embeddings import get_embeddings
+
+def get_or_create_store(session_id: str, chunks):
+    path = f"tmp/sessions/{session_id}/vector_store"
+
+    if os.path.exists(path):
+        return FAISS.load_local(path, get_embeddings(), allow_dangerous_deserialization=True)
+
+    db = FAISS.from_texts(chunks, get_embeddings())
+    db.save_local(path)
+    return db
+
+<!-- chunking.py -->
+from enum import Enum
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+class ContentType(str, Enum):
+    summary = "summary"
+    notes = "notes"
+    mindmap = "mindmap"
+    worksheet = "worksheet"
+    lesson_plan = "lesson_plan",
+    question_paper = "question_paper" 
+
+CHUNK_CONFIG = {
+    ContentType.summary: (1500, 200),
+    ContentType.notes: (1000, 150),
+    ContentType.mindmap: (800, 100),
+    ContentType.worksheet: (700, 100),
+    ContentType.lesson_plan: (1200, 200),
+    ContentType.question_paper: (900, 150),
+}
+
+def chunk_text(text: str, content_type: ContentType):
+    size, overlap = CHUNK_CONFIG[content_type]
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=size,
+        chunk_overlap=overlap,
+    )
+    return splitter.split_text(text)
+
+<!-- file_parser.py -->
+import fitz, docx
+
+def extract_text(file):
+    name = file.filename.lower()
+
+    if name.endswith(".pdf"):
+        doc = fitz.open(stream=file.file.read(), filetype="pdf")
+        return " ".join(page.get_text() for page in doc)
+
+    if name.endswith(".docx"):
+        d = docx.Document(file.file)
+        return "\n".join(p.text for p in d.paragraphs)
+
+    if name.endswith(".txt"):
+        return file.file.read().decode("utf-8")
+
+    raise ValueError("Unsupported file")
+
+<!-- session.py -->
+from fastapi import APIRouter, UploadFile, HTTPException
+from uuid import uuid4
+import os, json, time, shutil
+from utils.file_parser import extract_text
+
+router = APIRouter()
+BASE = "tmp/sessions"
+
+@router.post("/start")
+def start_session():
+    session_id = str(uuid4())
+    path = os.path.join(BASE, session_id)
+    os.makedirs(path)
+
+    meta = {
+        "session_id": session_id,
+        "created_at": int(time.time())
+    }
+
+    with open(os.path.join(path, "meta.json"), "w") as f:
+        json.dump(meta, f)
+
+    return {"session_id": session_id}
+
+
+@router.post("/{session_id}/upload")
+def upload_chapter(session_id: str, file: UploadFile):
+    base = os.path.join(BASE, session_id)
+    if not os.path.exists(base):
+        raise HTTPException(404, "Invalid session")
+
+    chapter_path = os.path.join(base, "chapter.txt")
+    if os.path.exists(chapter_path):
+        raise HTTPException(400, "Chapter already uploaded")
+
+    text = extract_text(file)
+    with open(chapter_path, "w", encoding="utf-8") as f:
+        f.write(text)
+
+    return {"status": "uploaded"}
+
+
+@router.delete("/{session_id}")
+def delete_session(session_id: str):
+    path = os.path.join(BASE, session_id)
+    if not os.path.exists(path):
+        raise HTTPException(404, "Session not found")
+
+    shutil.rmtree(path)
+    return {"status": "deleted"}
+
+<!-- prompts.py -->
+QUESTION_PAPER_PROMPT ="""
+You are a CBSE/NCERT exam paper setter.
+DIFFICULTY RULES (STRICT):
+- easy: direct definition, one-line fact, naming
+- medium: explanation using 2–3 sentences from text
+- hard: reasoning or comparison explicitly present in text
+
+ABSOLUTE RULES (NO EXCEPTIONS):
+- Use ONLY exact words, phrases, or sentences copied from the Chapter Text
+- Do NOT paraphrase
+- Do NOT summarize
+- Do NOT introduce synonyms
+- Do NOT use prior knowledge
+- If an answer sentence is not present verbatim, DO NOT generate the question
+- Match the marks blueprint EXACTLY
+- Follow question counts EXACTLY
+- JSON output ONLY
+- NO extra keys
+- NO wrapper objects
+- NO comments
+- NO trailing commas
+- NO markdown
+
+MATH RULES:
+- For mathematics, represent equations using LaTeX
+- LaTeX must be compatible with KaTeX
+- Do NOT invent formulas
+- Use ONLY formulas present in the text
+
+FIGURE HANDLING (MANDATORY):
+- If a question refers to any diagram, experiment, or illustration:
+  - Set "figure_reference": "Fig. X"
+- If figure number is mentioned in text, copy it exactly
+- If no figure is referenced, set null
+
+QUESTION TYPE RULES:
+
+MCQ:
+- Exactly 4 options
+- ALL options must be copied EXACTLY from the text
+- One and only one correct option
+- Provide "correct_index"
+
+Fill in the blanks:
+- Remove EXACTLY ONE word or phrase
+- The removed text must exist verbatim in the chapter
+
+Short / Long Answer:
+- Question sentence MUST match one of these patterns AND exist in text:
+  - "Define ..."
+  - "What is ..."
+  - "Explain ..."
+  - "Write ..."
+  - "Name ..."
+- Answer MUST be copied verbatim from the chapter text
+- Multi-sentence answers must preserve original order
+
+MARKS BLUEPRINT (STRICT):
+{marks_json}
+
+OUTPUT JSON FORMAT (STRICT — DO NOT CHANGE):
+{{
+  "mcq": [
+    {{
+      "question": "",
+      "options": ["", "", "", ""],
+      "correct_index": 0,
+      "marks": 1,
+      "difficulty": "easy",
+      "figure_reference": null
+    }}
+  ],
+  "fill_in_the_blanks": [
+    {{
+      "question": "",
+      "answer": "",
+      "figure_reference": null,
+      "marks": 1,
+      "difficulty": "easy",
+    }}
+  ],
+  "short_answer": [
+    {{
+      "question": "",
+      "answer": "",
+      "figure_reference": null,
+      "marks": 1,
+      "difficulty": "easy",
+    }}
+  ],
+  "long_answer": [
+    {{
+      "question": "",
+      "answer": "",
+      "figure_reference": null,
+      "marks": 1,
+      "difficulty": "easy",
+    }}
+  ]
+}}
+
+Chapter Text:
+{context}
+"""

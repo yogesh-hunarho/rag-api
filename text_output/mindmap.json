@@ -1,0 +1,48 @@
+{
+  "root": "MATTER IN OUR SURROUNDINGS",
+  "branches": [
+    {
+      "topic": "Matter",
+      "subtopics": [
+        "Everything in this universe is made up of material which scientists have named “matter”",
+        "occupy space",
+        "have mass",
+        "volume",
+        "Panch Tatva",
+        "air",
+        "earth",
+        "fire",
+        "sky",
+        "water",
+        "physical properties",
+        "chemical nature"
+      ]
+    },
+    {
+      "topic": "Physical Nature of Matter",
+      "subtopics": [
+        "MATTER IS MADE UP OF PARTICLES",
+        "continuous like a block of wood",
+        "made up of particles like sand",
+        "Activity 1.1"
+      ]
+    },
+    {
+      "topic": "States of Matter",
+      "subtopics": [
+        "arrangement of particles is most ordered in the case of solids",
+        "in the case of liquids layers of particles can slip and slide over each other",
+        "for gases, there is no order, particles just move about randomly",
+        "high compressibility",
+        "high speed of particles",
+        "large space between them",
+        "diffusing very fast into other gases",
+        "pressure exerted by the gas",
+        "inter-convertible",
+        "changing temperature or pressure",
+        "Sublimation",
+        "Deposition"
+      ]
+    }
+  ]
+}

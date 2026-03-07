@@ -1,3 +1,54 @@
+# SUMMARY_PROMPT = """You are an NCERT textbook summarizer.
+# Rules:
+# - Use only text words
+# - JSON only
+# Output:
+# {{ "summary": [] }}
+# Text:
+# {context}
+# """
+
+# NOTES_PROMPT = """Create student notes.
+# Rules:
+# - Textbook language only
+# - JSON only
+# Output:
+# {{ "notes": [{{ "heading": "", "points": [] }}] }}
+# Text:
+# {context}
+# """
+
+# MINDMAP_PROMPT = """Create a mind map.
+# Rules:
+# - Hierarchy only
+# - JSON only
+# Output:
+# {{ "root": "", "branches": [{{ "topic": "", "subtopics": [] }}] }}
+# Text:
+# {context}
+# """
+
+# WORKSHEET_PROMPT = """Create worksheet.
+# Rules:
+# - NCERT only
+# - JSON only
+# Output:
+# {{ "fill_in_the_blanks": [], "true_false": [], "match_the_following": [] }}
+# Text:
+# {context}
+# """
+
+# LESSON_PLAN_PROMPT = """Create lesson plan.
+# Rules:
+# - Teacher focused
+# - JSON only
+# Output:
+# {{ "learning_objectives": [], "teaching_steps": [], "assessment": [] }}
+# Text:
+# {context}
+# """
+
+
 SUMMARY_PROMPT = """You are an NCERT textbook summarizer for students.
 
 RULES (STRICT):
@@ -52,102 +103,35 @@ Text:
 {context}
 """
 
-MINDMAP_PROMPT = """
-You are an NCERT curriculum expert and diagram generator.
-Your task is to create a Mermaid mind map using ONLY the official Mermaid mindmap syntax.
+MINDMAP_PROMPT = """Create an NCERT-aligned mind map for teaching.
 
-STRICT RULES (VERY IMPORTANT):
-
-CONTENT RULES
-- Use ONLY concepts that appear in the given text
-- Do NOT introduce new concepts, relationships, or examples
+RULES (STRICT):
+- Use ONLY concepts present in the given text
+- Do NOT introduce new relationships or examples
 - Use textbook terminology only
-- Do NOT explain anything
-- Do NOT summarize
-- Only extract hierarchy
+- Focus on hierarchy, not explanation
+- JSON output ONLY
 
-STRUCTURE RULES
-- Root must be the chapter/topic
-- Level 1 = main concepts
-- Level 2 = related terms or processes
-- Maximum depth = 3 levels
-- Keep hierarchy simple and readable
+MIND MAP RULES:
+- Root must be the chapter topic
+- Branches must be main concepts
+- Subtopics must be directly related terms or processes
+- Keep hierarchy shallow and clear
 
-MERMAID SYNTAX RULES
-- Output MUST start with: mindmap
-- Use indentation to define hierarchy
-- Do NOT output JSON
-- Do NOT output markdown
-- Do NOT add comments
-- Do NOT add explanations
-
-ALLOWED NODE SHAPES (USE ONLY THESE)
-Root:
-  root((Chapter Topic))
-
-Main concepts:
-  (Concept)
-
-Subtopics:
-  [Subtopic]
-
-DO NOT use:
-- icons
-- class definitions
-- custom styling
-- Mermaid config blocks
-- unsupported shapes
-
-VALID EXAMPLE FORMAT (FOLLOW EXACTLY):
-
-mindmap
-  root((Matter in Our Surroundings))
-    (Matter)
-      [Particles]
-      [States of matter]
-    (Properties)
-      [Mass]
-      [Volume]
-
-OUTPUT RULES
-- Output ONLY the Mermaid code
-- No markdown code blocks
-- No extra text
-- No explanations
+OUTPUT JSON FORMAT (STRICT):
+{{
+  "root": "",
+  "branches": [
+    {{
+      "topic": "",
+      "subtopics": [""]
+    }}
+  ]
+}}
 
 Text:
 {context}
 """
-
-# MINDMAP_PROMPT = """Create an NCERT-aligned mind map for teaching.
-
-# RULES (STRICT):
-# - Use ONLY concepts present in the given text
-# - Do NOT introduce new relationships or examples
-# - Use textbook terminology only
-# - Focus on hierarchy, not explanation
-# - JSON output ONLY
-
-# MIND MAP RULES:
-# - Root must be the chapter topic
-# - Branches must be main concepts
-# - Subtopics must be directly related terms or processes
-# - Keep hierarchy shallow and clear
-
-# OUTPUT JSON FORMAT (STRICT):
-# {{
-#   "root": "",
-#   "branches": [
-#     {{
-#       "topic": "",
-#       "subtopics": [""]
-#     }}
-#   ]
-# }}
-
-# Text:
-# {context}
-# """
 
 
 LESSON_PLAN_PROMPT = """Create an NCERT-based lesson plan for classroom teaching.
@@ -155,7 +139,6 @@ LESSON_PLAN_PROMPT = """Create an NCERT-based lesson plan for classroom teaching
 RULES (STRICT):
 - Use ONLY information present in the given text
 - Do NOT add external activities or examples
-- Teaching steps must follow the order of concepts as they appear in the chapter text.
 - Focus on teacher delivery and student understanding
 - Language must be clear and instructional
 - JSON output ONLY
@@ -163,7 +146,7 @@ RULES (STRICT):
 LESSON PLAN STRUCTURE:
 - Learning objectives: what students should understand
 - Teaching steps: logical flow of concepts from the text
-- Assessment: simple oral or written checks based on the text.
+- Assessment: simple oral or written checks based on the text
 
 OUTPUT JSON FORMAT (STRICT):
 {{
@@ -197,13 +180,13 @@ OUTPUT JSON FORMAT (STRICT):
 {{
   "title": "",
   "fill_in_the_blanks": [
-    {{ "question": "", "answer":"" }}
+    {{ "question": "", answer:"" }}
   ],
   "true_false": [
-    {{ "statement": "", "answer":"" }}
+    {{ "statement": "", answer:"" }}
   ],
   "match_the_following": [
-    {{ "column_A": "", "column_B": "", "match":"" }}
+    {{ "column_A": "", "column_B": "", match:"" }}
   ]
 }}
 
@@ -251,8 +234,7 @@ QUESTION TYPE RULES:
 
 MCQ:
 - Exactly 4 options
-- The correct option MUST exist verbatim in the text.
-- Distractors may be short phrases derived from the same sentence but must not introduce new knowledge.
+- ALL options must be copied EXACTLY from the text
 - One and only one correct option
 - Provide "correct_index"
 
@@ -281,8 +263,8 @@ OUTPUT JSON FORMAT (STRICT — DO NOT CHANGE):
       "options": ["", "", "", ""],
       "correct_index": 0,
       "marks": 1,
-      "figure_reference": null,
-      "difficulty": "easy"
+      "difficulty": "easy",
+      "figure_reference": null
     }}
   ],
   "fill_in_the_blanks": [
@@ -291,7 +273,7 @@ OUTPUT JSON FORMAT (STRICT — DO NOT CHANGE):
       "answer": "",
       "figure_reference": null,
       "marks": 1,
-      "difficulty": "easy"
+      "difficulty": "easy",
     }}
   ],
   "short_question": [
@@ -300,7 +282,7 @@ OUTPUT JSON FORMAT (STRICT — DO NOT CHANGE):
       "answer": "",
       "figure_reference": null,
       "marks": 1,
-      "difficulty": "easy"
+      "difficulty": "easy",
     }}
   ],
   "long_question": [
@@ -309,7 +291,7 @@ OUTPUT JSON FORMAT (STRICT — DO NOT CHANGE):
       "answer": "",
       "figure_reference": null,
       "marks": 1,
-      "difficulty": "easy"
+      "difficulty": "easy",
     }}
   ]
 }}
@@ -317,6 +299,81 @@ OUTPUT JSON FORMAT (STRICT — DO NOT CHANGE):
 Chapter Text:
 {context}
 """
+
+
+# QUESTION_PAPER_PROMPT = """You are a CBSE/NCERT exam paper setter.
+
+# DIFFICULTY: {difficulty}
+
+# DIFFICULTY RULES:
+# - easy: direct recall, definitions
+# - medium: explanation, examples
+# - hard: reasoning, application
+
+# STRICT RULES:
+# - Use ONLY words present in the chapter text
+# - Do NOT invent facts
+# - Do not introduce new wording.
+# - Match EXACT marks distribution
+# - Follow blueprint strictly
+# - If a question refers to a figure, return its figure number
+# - JSON ONLY
+# - if math include the use can use latex for math
+# - Provide answers for EVERY question in the question paper.
+# - Answers must be accurate and derived ONLY from the context.
+
+# OUTPUT MUST BE STRICT VALID JSON ONLY.
+#   - No comments
+#   - No trailing commas
+#   - No text outside JSON
+
+# FIGURE HANDLING (MANDATORY)
+# If a question refers to a figure mentioned in the text:
+# - Set: "figure_reference": "Fig. X"
+
+# QUESTION TYPE RULES
+# MCQ:
+# - Exactly 4 options
+# - ALL options must be exact words or phrases from the text
+# - One correct option only
+# - Include "correct_index"
+
+# Fill in the blanks:
+# - Replace ONLY ONE word or phrase
+# - The missing word MUST appear exactly in the text
+
+# Short / Long answer:
+# - Use ONLY these sentence patterns IF they exist in the text:
+#   - "Define ..."
+#   - "What is ..."
+#   - "Explain ..."
+#   - "Write ..."
+#   - "Name ..."
+
+# MARKS BLUEPRINT:
+# {marks_json}
+
+# JSON FORMAT:
+# {{
+#   "mcq": [
+#     {{
+#       "question": "",
+#       "options": ["", "", "", ""],
+#       "correct_index": 0,
+#       "marks": 1,
+#       "difficulty": "easy",
+#       "figure_reference": null
+#     }}
+#   ],
+#   "fill_in_the_blanks": [],
+#   "short_answer": [],
+#   "long_answer": []
+# }}
+
+# Chapter Text:
+# {context}
+# """
+
 
 ANSWER_KEY_PROMPT = """You are an exam evaluator.
 Generate a professional answer key for the provided question paper using the context.
@@ -346,115 +403,44 @@ JSON FORMAT:
 
 # Specialized Question Generation Prompts
 
-# COMMON_RULES = """
-# DIFFICULTY RULES (STRICT):
-# - easy: direct definition, one-line fact, naming
-# - medium: explanation using 2–3 sentences from text
-# - hard: reasoning or comparison explicitly present in text
-
-# CONTEXT SAFETY RULE:
-# - If the Chapter Text does not contain enough information to produce valid output,
-#   return an empty JSON structure instead of guessing.
-
-# ABSOLUTE RULES (NO EXCEPTIONS):
-# - Use ONLY exact words, phrases, or sentences copied from the Chapter Text
-# - Every question must be directly supported by a sentence present in the Chapter Text.
-# - Do NOT paraphrase
-# - Do NOT summarize
-# - Do NOT introduce synonyms
-# - Do NOT use prior knowledge
-# - If an answer sentence is not present verbatim, DO NOT generate the question
-# - JSON output ONLY
-# - NO extra keys
-# - NO wrapper objects
-# - NO comments
-# - NO trailing commas
-# - NO markdown
-
-# FIGURE HANDLING (MANDATORY):
-# - If a question refers to any diagram, experiment, or illustration:
-#   - Set "figure_reference": "Fig. X"
-# - If figure number is mentioned in text, copy it exactly
-# - If no figure is referenced, set null
-
-# DUPLICATE PREVENTION RULE:
-# - Do NOT generate duplicate questions.
-# - Each question must test a different concept.
-
-# CONTEXT SAFETY RULE:
-# - If sufficient information is not present in the Chapter Text, return an empty JSON structure instead of guessing.
-
-# STEM SAFETY RULES (MANDATORY):
-# - All mathematical expressions MUST be written in LaTeX
-# - LaTeX MUST be compatible with KaTeX
-# - LaTeX MUST be enclosed in double quotes as valid JSON strings
-# - Do NOT introduce or derive formulas
-# - Use ONLY formulas exactly as written in the chapter text
-# - Do NOT simplify, rearrange, or restate formulas
-# - Preserve all symbols, subscripts, superscripts, arrows, and units exactly
-
-# JSON SAFETY RULES:
-# - Escape all backslashes in LaTeX as double backslashes (\\)
-# - Do NOT use unescaped newline characters inside strings
-# - Use plain ASCII text outside LaTeX
-# """
-
-
 COMMON_RULES = """
 DIFFICULTY RULES (STRICT):
-- easy: direct definition, one-line fact, or naming from the text
-- medium: explanation requiring 2–3 related sentences from the text
-- hard: reasoning or comparison explicitly stated in the text
+- easy: direct definition, one-line fact, naming
+- medium: explanation using 2–3 sentences from text
+- hard: reasoning or comparison explicitly present in text
 
-ABSOLUTE CONTEXT RULES (NO EXCEPTIONS):
-- Use ONLY information present in the provided Chapter Text
-- Do NOT introduce outside knowledge
+ABSOLUTE RULES (NO EXCEPTIONS):
+- Use ONLY exact words, phrases, or sentences copied from the Chapter Text
+- Do NOT paraphrase
+- Do NOT summarize
+- Do NOT introduce synonyms
 - Do NOT use prior knowledge
-- Do NOT invent examples, explanations, or relationships
-- If the required answer sentence is not present in the Chapter Text, DO NOT generate the question
-- Prefer copying phrases or sentences exactly from the Chapter Text whenever possible
-
-TEXT FIDELITY RULES:
-- Do NOT paraphrase definitions
-- Do NOT summarize content
-- Do NOT introduce synonyms for key terms
-- Preserve scientific terms exactly as written in the Chapter Text
-- Preserve capitalization of key terms if present in the text
-
-QUESTION SAFETY RULES:
-- Questions must be directly supported by the Chapter Text
-- Each question must be answerable using the Chapter Text alone
-- Do NOT generate duplicate questions
-- Avoid trivial repetition of the same concept
+- If an answer sentence is not present verbatim, DO NOT generate the question
+- JSON output ONLY
+- NO extra keys
+- NO wrapper objects
+- NO comments
+- NO trailing commas
+- NO markdown
 
 FIGURE HANDLING (MANDATORY):
 - If a question refers to any diagram, experiment, or illustration:
   - Set "figure_reference": "Fig. X"
-- If the figure number appears in the text, copy it exactly
-- If no figure is referenced, set "figure_reference": null
+- If figure number is mentioned in text, copy it exactly
+- If no figure is referenced, set null
 
 STEM SAFETY RULES (MANDATORY):
 - All mathematical expressions MUST be written in LaTeX
 - LaTeX MUST be compatible with KaTeX
-- LaTeX MUST appear inside JSON strings
-- Do NOT introduce formulas not present in the Chapter Text
-- Copy formulas exactly as written in the Chapter Text
-- Preserve subscripts, superscripts, arrows, and units exactly
+- LaTeX MUST be enclosed in double quotes as valid JSON strings
+- Do NOT introduce or derive formulas
+- Use ONLY formulas exactly as written in the chapter text
+- Do NOT simplify, rearrange, or restate formulas
+- Preserve all symbols, subscripts, superscripts, arrows, and units exactly
 
-CONTEXT SAFETY RULE:
-- If sufficient information is not present in the Chapter Text, return an empty JSON structure instead of guessing.
-
-JSON OUTPUT RULES (STRICT):
-- Output MUST be valid JSON
-- JSON output ONLY
-- NO markdown
-- NO comments
-- NO explanations
-- NO wrapper objects unless explicitly required
-- NO extra keys
-- NO trailing commas
-- Escape all backslashes in LaTeX as \\\\
-- Do NOT include unescaped newline characters inside JSON strings
+JSON SAFETY RULES:
+- Escape all backslashes in LaTeX as double backslashes (\\)
+- Do NOT use unescaped newline characters inside strings
 - Use plain ASCII text outside LaTeX
 """
 
@@ -463,11 +449,9 @@ Generate only Multiple Choice Questions (MCQs) from the given text.
 """ + COMMON_RULES + """
 MCQ RULES:
 - Exactly 4 options
-- The correct option MUST exist verbatim in the text.
-- Distractors may be short phrases derived from the same sentence but must not introduce new knowledge.
+- ALL options must be copied EXACTLY from the text
 - One and only one correct option
 - Provide "correct_index"
-- Generate the maximum possible questions WITHOUT repeating concepts.
 
 OUTPUT JSON FORMAT (STRICT):
 [
@@ -476,9 +460,8 @@ OUTPUT JSON FORMAT (STRICT):
     "options": ["", "", "", ""],
     "correct_index": 0 | 1 | 2 | 3,
     "marks": 1,
-    "figure_reference": null,
-    "source_sentence":"",
-    "difficulty": "easy"
+    "difficulty": "easy",
+    "figure_reference": null
   }}
 ]
 
@@ -508,7 +491,6 @@ IMPORTANT:
 - Do NOT remove or use figure references as answers
 - If a sentence refers to a figure, SKIP that sentence entirely
 - The blank must test conceptual understanding, not identification of figures
-- Generate the maximum possible questions WITHOUT repeating concepts.
 
 QUESTION FORMAT:
 - Replace the removed text with exactly "_________"
@@ -520,7 +502,7 @@ OUTPUT JSON FORMAT (STRICT):
     "question": "",
     "answer": "",
     "marks": 1,
-    "difficulty": "easy"
+    "difficulty": "easy",
   }}
 ]
 
@@ -528,9 +510,31 @@ Chapter Text:
 {context}
 """
 
+# FILL_BLANK_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
+# Generate only Fill in the Blanks questions from the given text.
+# """ + COMMON_RULES + """
+# FILL IN THE BLANKS RULES:
+# - Remove EXACTLY ONE word or phrase
+# - In this don't refer to fig. 
+# - The removed text must exist verbatim in the chapter
+
+# OUTPUT JSON FORMAT (STRICT):
+# [
+#   {{
+#     "question": "",
+#     "answer": "",
+#     "marks": 1,
+#     "difficulty": "easy",
+#   }}
+# ]
+
+# Chapter Text:
+# {context}
+# """
+
 SHORT_QUESTION_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
 Generate only Short Answer Questions from the given chapter text.
-Generate the maximum possible questions WITHOUT repeating concepts.
+Generate the maximum possible number of valid questions.
 """ + COMMON_RULES + """
 
 SHORT ANSWER RULES (STRICT):
@@ -562,13 +566,35 @@ OUTPUT JSON FORMAT (STRICT):
     "answer": "",
     "figure_reference": null,
     "marks": 2,
-    "difficulty": "easy"
+    "difficulty": "easy",
   }}
 ]
 
 Chapter Text:
 {context}
 """
+
+# SHORT_QUESTION_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
+# Generate only Short Answer Questions from the given text maximum number of questions could be genearete so return all questions.
+# """ + COMMON_RULES + """
+# SHORT ANSWER RULES:
+# - Answer MUST be copied verbatim from the chapter text
+# - Length should be 2-3 sentences.
+
+# OUTPUT JSON FORMAT (STRICT):
+# [
+#   {{
+#     "question": "",
+#     "answer": "",
+#     "figure_reference": null,
+#     "marks": 2,
+#     "difficulty": "easy",
+#   }}
+# ]
+
+# Chapter Text:
+# {context}
+# """
 
 LONG_QUESTION_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
 Generate only Long Answer Questions from the given text.
@@ -584,7 +610,7 @@ OUTPUT JSON FORMAT (STRICT):
     "answer": "",
     "figure_reference": null,
     "marks": 5,
-    "difficulty": "easy"
+    "difficulty": "easy",
   }}
 ]
 
@@ -607,7 +633,7 @@ OUTPUT JSON FORMAT (STRICT):
          "answer": "",
          "figure_reference": null,
          "marks": 1,
-         "difficulty": "easy"
+         "difficulty": "easy",
        }}
     ]
   }}

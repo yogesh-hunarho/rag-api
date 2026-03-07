@@ -32,3 +32,9 @@ fastapi-env
 .DS_Store
 
 .codspeed
+
+scrap.py
+spider.py
+navi_mumbai_businesses.csv
+navi_mumbai_businesses_with_contacts.csv
+tmp
