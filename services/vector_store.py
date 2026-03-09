@@ -3,6 +3,7 @@ import logging
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from utils.embeddings import get_embeddings
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -25,4 +26,9 @@ def get_or_create_store(session_id: str, chunks, content_type: str = "default"):
 
     db = FAISS.from_documents(docs, get_embeddings())
     db.save_local(path)
+
+    chunks_path = f"{path}/chunks.json"
+    with open(chunks_path, "w", encoding="utf-8") as f:
+        json.dump(chunks, f)
+        
     return db

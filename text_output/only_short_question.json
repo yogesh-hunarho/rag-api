@@ -1,105 +1,175 @@
 [
   {
-    "question": "What do scientists name the material everything in this universe is made up of?",
+    "question": "What is evaporation, and why is it considered a surface phenomenon?",
+    "answer": "Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "medium"
+  },
+  {
+    "question": "List the factors that influence the rate of evaporation.",
+    "answer": "The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "What effect does evaporation have on its surroundings?",
+    "answer": "Evaporation causes cooling.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "Define latent heat of vaporisation.",
+    "answer": "Latent heat of vaporisation is the heat energy required to change 1 kg of a liquid to gas at atmospheric pressure at its boiling point.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "What is meant by latent heat of fusion?",
+    "answer": "Latent heat of fusion is the amount of heat energy required to change 1 kg of solid into liquid at its melting point.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "Describe the arrangement of particles in solids.",
+    "answer": "The arrangement of particles is most ordered in the case of solids",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "How do particles behave in the liquid state?",
+    "answer": "in the case of liquids layers of particles can slip and slide over each other",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "Characterize the movement and order of particles in gases.",
+    "answer": "for gases, there is no order, particles just move about randomly.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "Are the states of matter inter-convertible?",
+    "answer": "The states of matter are inter-convertible.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "How can the state of matter be changed?",
+    "answer": "The state of matter can be changed by changing temperature or pressure.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "Define sublimation.",
+    "answer": "Sublimation is the change of solid state directly to gaseous state without going through liquid state.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "What is deposition in the context of states of matter?",
+    "answer": "Deposition is the change of gaseous state directly to solid state without going through liquid state.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "Explain why boiling is considered a bulk phenomenon.",
+    "answer": "Boiling is a bulk phenomenon. Particles from the bulk (whole) of the liquid change into vapour state.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "medium"
+  },
+  {
+    "question": "What happens to the kinetic energy of particles in solids when their temperature is increased?",
+    "answer": "On increasing the temperature of solids, the kinetic energy of the particles increases.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "Define the melting point of a solid.",
+    "answer": "The minimum temperature at which a solid melts to become a liquid at the atmospheric pressure is called its melting point.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "What does the melting point of a solid indicate?",
+    "answer": "The melting point of a solid is an indication of the strength of the force of attraction between its particles.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "In what three states of matter can water exist?",
+    "answer": "water can exist in three states of matter– • solid, as ice, • liquid, as the familiar water, and • gas, as water vapour.",
+    "figure_reference": null,
+    "marks": 2,
+    "difficulty": "easy"
+  },
+  {
+    "question": "What is matter according to scientists?",
     "answer": "Everything in this universe is made up of material which scientists have named “matter”.",
     "figure_reference": null,
     "marks": 2,
     "difficulty": "easy"
   },
   {
-    "question": "Give examples of things that are considered matter.",
-    "answer": "The air we breathe, the food we eat, stones, clouds, stars, plants and animals, even a small drop of water or a particle of sand — every thing is matter.",
+    "question": "What are the two fundamental properties of matter?",
+    "answer": "occupy space and have mass.",
     "figure_reference": null,
     "marks": 2,
     "difficulty": "easy"
   },
   {
-    "question": "What two fundamental properties do all things considered matter possess?",
-    "answer": "All the things mentioned above occupy space and have mass. In other words, they have both mass* and volume**.",
-    "figure_reference": null,
-    "marks": 2,
-    "difficulty": "easy"
-  },
-  {
-    "question": "How did early Indian philosophers classify matter?",
+    "question": "According to early Indian philosophers, how was matter classified?",
     "answer": "Early Indian philosophers classified matter in the form of five basic elements — the “Panch Tatva” — air, earth, fire, sky and water.",
     "figure_reference": null,
     "marks": 2,
     "difficulty": "easy"
   },
   {
-    "question": "According to early Indian philosophers, what was everything, living or non-living, made up of?",
-    "answer": "According to them everything, living or non-living, was made up of these five basic elements.",
+    "question": "Describe the shape and volume characteristics of liquids.",
+    "answer": "liquids have no fixed shape but have a fixed volume.",
     "figure_reference": null,
     "marks": 2,
     "difficulty": "easy"
   },
   {
-    "question": "On what two bases have modern day scientists classified matter?",
-    "answer": "Modern day scientists have evolved two types of classification of matter based on their physical properties and chemical nature.",
-    "figure_reference": null,
-    "marks": 2,
-    "difficulty": "easy"
-  },
-  {
-    "question": "What aspect of matter will be discussed in this chapter?",
-    "answer": "In this chapter we shall learn about matter based on its physical properties.",
-    "figure_reference": null,
-    "marks": 2,
-    "difficulty": "easy"
-  },
-  {
-    "question": "Describe the two prevailing schools of thought regarding the nature of matter for a long time.",
-    "answer": "For a long time, two schools of thought prevailed regarding the nature of matter. One school believed matter to be continuous like a block of wood, whereas, the other thought that matter was made up of particles like sand.",
+    "question": "Why are liquids considered fluid and not rigid?",
+    "answer": "Liquids flow and change shape, so they are not rigid but can be called fluid.",
     "figure_reference": null,
     "marks": 2,
     "difficulty": "medium"
   },
   {
-    "question": "How can the state of matter be changed into another state?",
-    "answer": "The state of matter can be changed into another state by changing the temperature.",
+    "question": "Which states of matter can diffuse into liquids?",
+    "answer": "solids, liquids and gases can diffuse into liquids.",
     "figure_reference": null,
     "marks": 2,
     "difficulty": "easy"
   },
   {
-    "question": "How do substances around us change state from solid to liquid and from liquid to gas?",
-    "answer": "Substances around us change state from solid to liquid and from liquid to gas on application of heat.",
+    "question": "Compare the rate of diffusion of liquids with that of solids.",
+    "answer": "The rate of diffusion of liquids is higher than that of solids.",
     "figure_reference": null,
     "marks": 2,
     "difficulty": "easy"
   },
   {
-    "question": "Are there substances that change directly from solid state to gaseous state and vice versa without changing into the liquid state?",
-    "answer": "There are some that change directly from solid state to gaseous state and vice versa without changing into the liquid state.",
-    "figure_reference": null,
-    "marks": 2,
-    "difficulty": "easy"
-  },
-  {
-    "question": "Define sublimation and deposition.",
-    "answer": "A change of state directly from solid to gas without changing into liquid state is called sublimation and the direct change of gas to solid without changing into liquid is called deposition.",
-    "figure_reference": null,
-    "marks": 2,
-    "difficulty": "easy"
-  },
-  {
-    "question": "What causes the difference in various states of matter?",
-    "answer": "The difference in various states of matter is due to the difference in the distances between the constituent particles.",
-    "figure_reference": null,
-    "marks": 2,
-    "difficulty": "easy"
-  },
-  {
-    "question": "What is solid carbon dioxide also known as?",
-    "answer": "Solid carbon dioxide is also known as dry ice.",
-    "figure_reference": null,
-    "marks": 2,
-    "difficulty": "easy"
-  },
-  {
-    "question": "What two factors determine the state of a substance?",
-    "answer": "Pressure and temperature determine the state of a substance, whether it will be solid, liquid or gas.",
+    "question": "What effect does a gas have on the walls of its container?",
+    "answer": "A gas exerts pressure on the walls of the container.",
     "figure_reference": null,
     "marks": 2,
     "difficulty": "easy"

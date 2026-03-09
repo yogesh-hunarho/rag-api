@@ -157,6 +157,13 @@ RULES (STRICT):
 - Questions must be answerable without seeing any image
 - JSON output ONLY
 
+QUESTION DISTRIBUTION RULE:
+- Generate questions covering ALL concepts
+- Each concept should produce at least one question
+
+CONCEPTS:
+{concepts}
+
 WORKSHEET STRUCTURE:
 - Fill in the Blanks: key terms or concepts
 - True / False: clear factual statements
@@ -383,6 +390,13 @@ MCQ RULES:
 - Provide "correct_index"
 - Generate the maximum possible questions WITHOUT repeating concepts.
 
+QUESTION DISTRIBUTION RULE:
+- Generate questions covering ALL concepts
+- Each concept should produce at least one question
+
+CONCEPTS:
+{concepts}
+
 OUTPUT JSON FORMAT (STRICT):
 [
   {{
@@ -423,6 +437,13 @@ IMPORTANT:
 - If a sentence refers to a figure, SKIP that sentence entirely
 - The blank must test conceptual understanding, not identification of figures
 - Generate the maximum possible questions WITHOUT repeating concepts.
+
+QUESTION DISTRIBUTION RULE:
+- Generate questions covering ALL concepts
+- Each concept should produce at least one question
+
+CONCEPTS:
+{concepts}
 
 QUESTION FORMAT:
 - Replace the removed text with exactly "_________"
@@ -469,6 +490,13 @@ QUESTION QUALITY RULES:
   "What happens when…", "Why does…", "Explain how…", "What is observed when…"
 - The image reference (if any) should only provide context, not essential data
 
+QUESTION DISTRIBUTION RULE:
+- Generate questions covering ALL concepts
+- Each concept should produce at least one question
+
+CONCEPTS:
+{concepts}
+
 OUTPUT JSON FORMAT (STRICT):
 [
   {{
@@ -482,6 +510,13 @@ OUTPUT JSON FORMAT (STRICT):
 
 Chapter Text:
 {context}
+
+IMPORTANT:
+Return ONLY valid JSON.
+Do NOT wrap JSON in markdown.
+Do NOT add explanations.
+Ensure the JSON array is complete and properly closed.
+
 """
 
 LONG_QUESTION_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
@@ -490,6 +525,13 @@ Generate only Long Answer Questions from the given text.
 LONG ANSWER RULES:
 - Answer MUST be copied verbatim from the chapter text
 - Length should be a detailed explanation or multiple paragraphs.
+
+QUESTION DISTRIBUTION RULE:
+- Generate questions covering ALL concepts
+- Each concept should produce at least one question
+
+CONCEPTS:
+{concepts}
 
 OUTPUT JSON FORMAT (STRICT):
 [
@@ -510,6 +552,13 @@ CASE_BASE_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
 Generate Case-based Questions from the given text. A case-based question includes a context (passage) followed by multiple sub-questions.
 """ + COMMON_RULES + """
 
+QUESTION DISTRIBUTION RULE:
+- Generate questions covering ALL concepts
+- Each concept should produce at least one question
+
+CONCEPTS:
+{concepts}
+
 OUTPUT JSON FORMAT (STRICT):
 [
   {{
@@ -528,5 +577,26 @@ OUTPUT JSON FORMAT (STRICT):
 ]
 
 Chapter Text:
+{context}
+"""
+
+CONCEPT_EXTRACTION_PROMPT = """
+You are an NCERT textbook analyzer.
+
+Extract the important concepts from the chapter text.
+
+RULES:
+- Use ONLY concepts present in the text
+- Do NOT summarize
+- Extract only core concepts
+- Minimum 15 concepts
+- Avoid duplicates
+
+OUTPUT JSON FORMAT:
+{{
+  "concepts": [""]
+}}
+
+Text:
 {context}
 """

@@ -1,236 +1,282 @@
 [
   {
-    "question": "What have scientists named the material everything in this universe is made up of?",
+    "question": "What do scientists call the material everything in the universe is made up of?",
     "options": [
+      "energy",
       "matter",
+      "elements",
+      "compounds"
+    ],
+    "correct_index": 1,
+    "marks": 1,
+    "figure_reference": null,
+    "source_sentence": "Everything in this universe is made up of material which scientists have named “matter”.",
+    "difficulty": "easy"
+  },
+  {
+    "question": "According to early Indian philosophers, matter was classified into how many basic elements?",
+    "options": [
+      "Two",
+      "Three",
+      "Four",
+      "Five"
+    ],
+    "correct_index": 3,
+    "marks": 1,
+    "figure_reference": null,
+    "source_sentence": "Early Indian philosophers classified matter in the form of five basic elements — the “Panch Tatva” — air, earth, fire, sky and water.",
+    "difficulty": "easy"
+  },
+  {
+    "question": "Which of the following is NOT one of the 'Panch Tatva' as classified by early Indian philosophers?",
+    "options": [
       "air",
-      "food",
-      "stones"
+      "water",
+      "metal",
+      "earth"
     ],
-    "correct_index": 0,
+    "correct_index": 2,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Early Indian philosophers classified matter in the form of five basic elements — the “Panch Tatva” — air, earth, fire, sky and water.",
+    "difficulty": "easy"
   },
   {
-    "question": "What do all the things mentioned above occupy and have?",
+    "question": "What are the two bases for modern scientific classification of matter?",
     "options": [
-      "space and have mass",
-      "different shapes",
-      "different sizes",
-      "different textures"
+      "Physical properties and chemical nature",
+      "Shape and size",
+      "Mass and volume",
+      "Living and non-living"
     ],
     "correct_index": 0,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Modern day scientists have evolved two types of classification of matter based on their physical properties and chemical nature.",
+    "difficulty": "easy"
   },
   {
-    "question": "What do things that occupy space and have mass possess?",
+    "question": "Which of the following statements is true about matter?",
     "options": [
-      "both mass* and volume**",
-      "different shapes",
-      "different sizes",
-      "different textures"
+      "Matter only has mass but no volume.",
+      "Matter only occupies space but has no mass.",
+      "Matter has both mass and volume.",
+      "Matter is continuous like a block of wood."
     ],
-    "correct_index": 0,
+    "correct_index": 2,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "We can also see as we look around that all the things mentioned above occupy space and have mass. In other words, they have both mass* and volume**.",
+    "difficulty": "easy"
   },
   {
-    "question": "How did Early Indian philosophers classify matter?",
+    "question": "What is the standard unit for density?",
     "options": [
-      "in the form of five basic elements — the “Panch Tatva” — air, earth, fire, sky and water",
-      "based on their physical properties",
-      "based on their chemical nature",
-      "as continuous like a block of wood"
+      "kilogram (kg)",
+      "cubic metre (m\\textsuperscript{3})",
+      "kilogram per cubic metre (kg m\\textsuperscript{–3})",
+      "pascal (Pa)"
     ],
-    "correct_index": 0,
+    "correct_index": 2,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Density kilogram per cubic metre kg m–3",
+    "difficulty": "easy"
   },
   {
-    "question": "What did Ancient Greek philosophers arrive at regarding matter?",
+    "question": "What is the standard unit for volume?",
     "options": [
-      "a similar classification of matter",
-      "two types of classification of matter",
-      "matter to be continuous like a block of wood",
-      "matter was made up of particles like sand"
+      "metre (m)",
+      "kilogram (kg)",
+      "cubic metre (m\\textsuperscript{3})",
+      "newton (N)"
     ],
-    "correct_index": 0,
+    "correct_index": 2,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Volume cubic metre m3",
+    "difficulty": "easy"
   },
   {
-    "question": "What two types of classification of matter have modern day scientists evolved?",
+    "question": "What is the standard unit for temperature?",
     "options": [
-      "based on their physical properties and chemical nature",
-      "in the form of five basic elements",
-      "as continuous like a block of wood",
-      "as made up of particles like sand"
+      "kelvin (K)",
+      "metre (m)",
+      "kilogram (kg)",
+      "pascal (Pa)"
     ],
     "correct_index": 0,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Temperature kelvin K",
+    "difficulty": "easy"
   },
   {
-    "question": "What were the two prevailing schools of thought regarding the nature of matter for a long time?",
+    "question": "Which of the following is an example of water in its solid state?",
     "options": [
-      "One school believed matter to be continuous like a block of wood, whereas, the other thought that matter was made up of particles like sand.",
-      "Early Indian philosophers classified matter in the form of five basic elements.",
-      "Modern day scientists have evolved two types of classification of matter based on their physical properties and chemical nature.",
-      "Everything in this universe is made up of material which scientists have named “matter”."
+      "water vapour",
+      "ice",
+      "familiar water",
+      "steam"
     ],
-    "correct_index": 0,
+    "correct_index": 1,
     "marks": 1,
-    "difficulty": "medium",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "water can exist in three states of matter– • solid, as ice,",
+    "difficulty": "easy"
   },
   {
-    "question": "What does Fig. 1.2 illustrate?",
+    "question": "How can the state of matter be changed?",
     "options": [
-      "Estimating how small are the particles of matter.",
-      "Interconversion of the three states of matter",
-      "Put an inverted funnel over the china dish.",
-      "Put a cotton plug on the stem of the funnel"
+      "Only by changing temperature",
+      "Only by changing pressure",
+      "By changing temperature or pressure",
+      "By changing its chemical nature"
     ],
-    "correct_index": 0,
+    "correct_index": 2,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": "Fig. 1.2"
+    "figure_reference": null,
+    "source_sentence": "The state of matter can be changed by changing temperature or pressure.",
+    "difficulty": "easy"
   },
   {
-    "question": "How do you convert a temperature on the Celsius scale to the Kelvin scale?",
+    "question": "What is the process called when a solid state changes directly to a gaseous state without going through the liquid state?",
     "options": [
-      "you have to add 273 to the given temperature",
-      "you have to subtract 273 from the given temperature",
-      "by changing the temperature",
-      "on application of heat"
+      "Evaporation",
+      "Boiling",
+      "Sublimation",
+      "Deposition"
     ],
-    "correct_index": 0,
+    "correct_index": 2,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Sublimation is the change of solid state directly to gaseous state without going through liquid state.",
+    "difficulty": "easy"
   },
   {
-    "question": "How do you convert a temperature on the Kelvin scale to the Celsius scale?",
+    "question": "What is the process called when a gaseous state changes directly to a solid state without going through the liquid state?",
     "options": [
-      "have to subtract 273 from the given temperature",
-      "have to add 273 to the given temperature",
-      "by changing the temperature",
-      "on application of heat"
+      "Evaporation",
+      "Boiling",
+      "Sublimation",
+      "Deposition"
     ],
-    "correct_index": 0,
+    "correct_index": 3,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Deposition is the change of gaseous state directly to solid state without going through liquid state.",
+    "difficulty": "easy"
   },
   {
-    "question": "What can we infer about the state of matter?",
+    "question": "Which phenomenon is described as a surface phenomenon where particles from the surface gain enough energy to change into the vapour state?",
     "options": [
-      "the state of matter can be changed into another state by changing the temperature",
-      "substances around us change state from solid to liquid",
-      "substances around us change state from liquid to gas on application of heat",
-      "there are some that change directly from solid state to gaseous state"
+      "Boiling",
+      "Melting",
+      "Evaporation",
+      "Condensation"
     ],
-    "correct_index": 0,
+    "correct_index": 2,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state.",
+    "difficulty": "easy"
   },
   {
-    "question": "How do some substances change state directly from solid to gaseous state and vice versa?",
+    "question": "What is the effect of evaporation?",
     "options": [
-      "without changing into the liquid state",
-      "on application of heat",
-      "by changing the temperature",
-      "by putting pressure and compress a gas"
+      "It causes heating.",
+      "It causes cooling.",
+      "It has no effect on temperature.",
+      "It increases humidity."
     ],
-    "correct_index": 0,
+    "correct_index": 1,
     "marks": 1,
-    "difficulty": "medium",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Evaporation causes cooling.",
+    "difficulty": "easy"
   },
   {
-    "question": "What is a change of state directly from solid to gas without changing into liquid state called?",
+    "question": "What is Latent heat of vaporisation?",
     "options": [
-      "sublimation",
-      "deposition",
-      "change of state directly from solid to gas",
-      "change of gas to solid"
+      "The heat energy required to change 1 kg of a solid to liquid at its melting point.",
+      "The heat energy required to change 1 kg of a liquid to gas at atmospheric pressure at its boiling point.",
+      "The heat energy released when 1 kg of gas changes to liquid.",
+      "The heat energy required to increase the temperature of 1 kg of liquid by 1 degree Celsius."
     ],
-    "correct_index": 0,
+    "correct_index": 1,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Latent heat of vaporisation is the heat energy required to change 1 kg of a liquid to gas at atmospheric pressure at its boiling point.",
+    "difficulty": "easy"
   },
   {
-    "question": "What is the direct change of gas to solid without changing into liquid called?",
+    "question": "What is Latent heat of fusion?",
     "options": [
-      "deposition",
-      "sublimation",
-      "change of state directly from solid to gas",
-      "change of gas to solid"
+      "The amount of heat energy required to change 1 kg of solid into liquid at its melting point.",
+      "The amount of heat energy required to change 1 kg of liquid into gas at its boiling point.",
+      "The amount of heat energy released when 1 kg of liquid freezes.",
+      "The amount of heat energy required to raise the temperature of 1 kg of solid."
     ],
     "correct_index": 0,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "Latent heat of fusion is the amount of heat energy required to change 1 kg of solid into liquid at its melting point.",
+    "difficulty": "easy"
   },
   {
-    "question": "What is the difference in various states of matter due to?",
+    "question": "Which of the following factors does NOT affect the rate of evaporation?",
     "options": [
-      "the difference in the distances between the constituent particles",
-      "changing the temperature",
-      "application of heat",
-      "without changing into the liquid state"
+      "Surface area exposed to the atmosphere",
+      "Temperature",
+      "Humidity",
+      "Mass of the liquid"
     ],
-    "correct_index": 0,
+    "correct_index": 3,
     "marks": 1,
-    "difficulty": "medium",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed.",
+    "difficulty": "medium"
   },
   {
-    "question": "What is solid carbon dioxide also known as?",
+    "question": "How are particles arranged in solids?",
     "options": [
-      "dry ice",
-      "matter",
-      "Panch Tatva",
-      "potassium permanganate"
+      "Particles move about randomly with no order.",
+      "Layers of particles can slip and slide over each other.",
+      "The arrangement of particles is most ordered.",
+      "Particles move freely with greater space between them."
     ],
-    "correct_index": 0,
+    "correct_index": 2,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "The arrangement of particles is most ordered in the case of solids, in the case of liquids layers of particles can slip and slide over each other while for gases, there is no order, particles just move about randomly.",
+    "difficulty": "medium"
   },
   {
-    "question": "What determines the state of a substance, whether it will be solid, liquid or gas?",
+    "question": "Why is the rate of diffusion of liquids higher than that of solids?",
     "options": [
-      "pressure and temperature",
-      "physical properties and chemical nature",
-      "five basic elements",
-      "distances between the constituent particles"
+      "Because liquid particles are heavier than solid particles.",
+      "Because liquid particles have less space between them.",
+      "Because in the liquid state, particles move freely and have greater space between each other.",
+      "Because liquids have a fixed shape."
     ],
-    "correct_index": 0,
+    "correct_index": 2,
     "marks": 1,
-    "difficulty": "hard",
-    "figure_reference": null
+    "figure_reference": null,
+    "source_sentence": "The rate of diffusion of liquids is higher than that of solids. This is due to the fact that in the liquid state, particles move freely and have greater space between each other as compared to particles in the solid state.",
+    "difficulty": "hard"
   },
   {
-    "question": "What does Fig. 1.9 illustrate?",
+    "question": "What is boiling described as?",
     "options": [
-      "Interconversion of the three states of matter",
-      "Estimating how small are the particles of matter.",
-      "Put an inverted funnel over the china dish.",
-      "Put a cotton plug on the stem of the funnel"
+      "A surface phenomenon where particles from the surface change into vapour.",
+      "A bulk phenomenon where particles from the whole of the liquid change into vapour state.",
+      "A process that occurs only at room temperature.",
+      "A change of solid state directly to gaseous state."
     ],
-    "correct_index": 0,
+    "correct_index": 1,
     "marks": 1,
-    "difficulty": "easy",
-    "figure_reference": "Fig. 1.9"
+    "figure_reference": null,
+    "source_sentence": "Boiling is a bulk phenomenon. Particles from the bulk (whole) of the liquid change into vapour state.",
+    "difficulty": "easy"
   }
 ]
