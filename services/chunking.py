@@ -9,19 +9,17 @@ class GenerateType(str, Enum):
     only_short_question = "only_short_question"
     only_long_question = "only_long_question"
     only_case_base = "only_case_base"
-    
+
     summary = "summary"
     notes = "notes"
-    mindmap = "mindmap"
     worksheet = "worksheet"
-    lesson_plan = "lesson_plan",
+    lesson_plan = "lesson_plan"
 
 CHUNK_CONFIG = {
     ContentType.question_paper: (900, 150),
-    
+
     GenerateType.summary: (1500, 200),
     GenerateType.notes: (1000, 150),
-    GenerateType.mindmap: (800, 100),
     GenerateType.worksheet: (700, 100),
     GenerateType.lesson_plan: (1200, 200),
     GenerateType.only_mcq: (900, 150),
@@ -36,5 +34,21 @@ def chunk_text(text: str, content_type: ContentType):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=size,
         chunk_overlap=overlap,
+        separators=[
+            "\n\n",
+            "\n",
+            ". ",
+            "? ",
+            "! ",
+            " ",
+        ],
     )
-    return splitter.split_text(text)
+
+    chunks = splitter.split_text(text)
+    return [
+        {
+            "content": chunk,
+            "metadata": {"chunk_id": i},
+        }
+        for i, chunk in enumerate(chunks)
+    ]

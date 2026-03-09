@@ -119,37 +119,6 @@ Text:
 {context}
 """
 
-# MINDMAP_PROMPT = """Create an NCERT-aligned mind map for teaching.
-
-# RULES (STRICT):
-# - Use ONLY concepts present in the given text
-# - Do NOT introduce new relationships or examples
-# - Use textbook terminology only
-# - Focus on hierarchy, not explanation
-# - JSON output ONLY
-
-# MIND MAP RULES:
-# - Root must be the chapter topic
-# - Branches must be main concepts
-# - Subtopics must be directly related terms or processes
-# - Keep hierarchy shallow and clear
-
-# OUTPUT JSON FORMAT (STRICT):
-# {{
-#   "root": "",
-#   "branches": [
-#     {{
-#       "topic": "",
-#       "subtopics": [""]
-#     }}
-#   ]
-# }}
-
-# Text:
-# {context}
-# """
-
-
 LESSON_PLAN_PROMPT = """Create an NCERT-based lesson plan for classroom teaching.
 
 RULES (STRICT):
@@ -343,61 +312,6 @@ JSON FORMAT:
   ]
 }}
 """
-
-# Specialized Question Generation Prompts
-
-# COMMON_RULES = """
-# DIFFICULTY RULES (STRICT):
-# - easy: direct definition, one-line fact, naming
-# - medium: explanation using 2–3 sentences from text
-# - hard: reasoning or comparison explicitly present in text
-
-# CONTEXT SAFETY RULE:
-# - If the Chapter Text does not contain enough information to produce valid output,
-#   return an empty JSON structure instead of guessing.
-
-# ABSOLUTE RULES (NO EXCEPTIONS):
-# - Use ONLY exact words, phrases, or sentences copied from the Chapter Text
-# - Every question must be directly supported by a sentence present in the Chapter Text.
-# - Do NOT paraphrase
-# - Do NOT summarize
-# - Do NOT introduce synonyms
-# - Do NOT use prior knowledge
-# - If an answer sentence is not present verbatim, DO NOT generate the question
-# - JSON output ONLY
-# - NO extra keys
-# - NO wrapper objects
-# - NO comments
-# - NO trailing commas
-# - NO markdown
-
-# FIGURE HANDLING (MANDATORY):
-# - If a question refers to any diagram, experiment, or illustration:
-#   - Set "figure_reference": "Fig. X"
-# - If figure number is mentioned in text, copy it exactly
-# - If no figure is referenced, set null
-
-# DUPLICATE PREVENTION RULE:
-# - Do NOT generate duplicate questions.
-# - Each question must test a different concept.
-
-# CONTEXT SAFETY RULE:
-# - If sufficient information is not present in the Chapter Text, return an empty JSON structure instead of guessing.
-
-# STEM SAFETY RULES (MANDATORY):
-# - All mathematical expressions MUST be written in LaTeX
-# - LaTeX MUST be compatible with KaTeX
-# - LaTeX MUST be enclosed in double quotes as valid JSON strings
-# - Do NOT introduce or derive formulas
-# - Use ONLY formulas exactly as written in the chapter text
-# - Do NOT simplify, rearrange, or restate formulas
-# - Preserve all symbols, subscripts, superscripts, arrows, and units exactly
-
-# JSON SAFETY RULES:
-# - Escape all backslashes in LaTeX as double backslashes (\\)
-# - Do NOT use unescaped newline characters inside strings
-# - Use plain ASCII text outside LaTeX
-# """
 
 
 COMMON_RULES = """
