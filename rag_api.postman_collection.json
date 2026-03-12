@@ -20,7 +20,28 @@
               "path": [""]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Successful Root Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/",
+                  "host": ["{{baseUrl}}"],
+                  "path": [""]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n    \"app\": \"RAG Content Generator\",\n    \"description\": \"Generate question papers, notes, summaries, mindmaps, and more from NCERT chapters.\",\n    \"endpoints\": [\"/session/start\", \"/generate/{type}\", \"/docs\"]\n}"
+            }
+          ]
         },
         {
           "name": "API Status",
@@ -33,7 +54,28 @@
               "path": ["api", "status"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Successful Status Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/status",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "status"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": \"ok\"\n}"
+            }
+          ]
         }
       ]
     },
@@ -66,7 +108,28 @@
               "path": ["session", "start"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Successful Session Start",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/session/start",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["session", "start"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n    \"session_id\": \"550e8400-e29b-41d4-a716-446655440000\"\n}"
+            }
+          ]
         },
         {
           "name": "Upload Chapter",
@@ -89,7 +152,28 @@
               "path": ["session", "{{sessionId}}", "upload"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Successful Upload",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/session/{{sessionId}}/upload",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["session", "{{sessionId}}", "upload"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": \"uploaded\"\n}"
+            }
+          ]
         },
         {
           "name": "Delete Session",
@@ -102,7 +186,28 @@
               "path": ["session", "{{sessionId}}"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Successful Deletion",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/session/{{sessionId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["session", "{{sessionId}}"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": \"deleted\"\n}"
+            }
+          ]
         }
       ]
     },
@@ -135,7 +240,29 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Example Question Paper",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/generate/question_paper?session_id={{sessionId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["generate", "question_paper"],
+                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n    \"mcq\": [\n        {\n            \"question\": \"Physical nature of matter is ________.\",\n            \"options\": [\"Continuous\", \"Particulate\", \"Neither\", \"Both\"],\n            \"correct_index\": 1,\n            \"marks\": 1\n        }\n    ],\n    \"fill_in_the_blanks\": [\n        {\n            \"question\": \"Matter is made of _______.\",\n            \"answer\": \"particles\",\n            \"marks\": 1\n        }\n    ],\n    \"short_question\": [],\n    \"long_question\": []\n}"
+            }
+          ]
         },
         {
           "name": "Generate Mindmap",
@@ -154,7 +281,29 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Example Mindmap",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/generate/lession/mindmap?session_id={{sessionId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["generate", "lession", "mindmap"],
+                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n  \"root\": \"MATTER IN OUR SURROUNDINGS\",\n  \"branches\": [\n    {\n      \"topic\": \"Matter\",\n      \"subtopics\": [\n        \"occupy space\",\n        \"have mass\"\n      ]\n    }\n  ]\n}"
+            }
+          ]
         },
         {
           "name": "Generate MCQ Only",
@@ -173,7 +322,29 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Example MCQ List",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/generate/only_mcq?session_id={{sessionId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["generate", "only_mcq"],
+                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"question\": \"What is the standard unit of temperature?\",\n        \"options\": [\"Celsius\", \"Kelvin\", \"Fahrenheit\", \"Pascal\"],\n        \"correct_index\": 1,\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n    }\n]"
+            }
+          ]
         },
         {
           "name": "Generate Summary",
@@ -192,7 +363,29 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Example Summary",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/generate/summary?session_id={{sessionId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["generate", "summary"],
+                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n    \"summary\": [\n        \"Matter is anything that occupies space and has mass.\",\n        \"Matter exists in three states: solid, liquid, and gas.\"\n    ]\n}"
+            }
+          ]
         },
         {
           "name": "Generate Notes",
@@ -211,7 +404,29 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Example Notes",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/generate/notes?session_id={{sessionId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["generate", "notes"],
+                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n    \"title\": \"Matter in Our Surroundings\",\n    \"small_description\": \"Detailed notes on states of matter.\",\n    \"notes\": [\n        {\n            \"heading\": \"States of Matter\",\n            \"points\": [\n                \"Solids have fixed shape\",\n                \"Liquids have fixed volume\",\n                \"Gases are highly compressible\"\n            ]\n        }\n    ]\n}"
+            }
+          ]
         },
         {
           "name": "Generate Worksheet",
@@ -230,7 +445,29 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Example Worksheet",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/generate/worksheet?session_id={{sessionId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["generate", "worksheet"],
+                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n    \"title\": \"Matter in Our Surroundings - Worksheet\",\n    \"fill_in_the_blanks\": [\n        {\"question\": \"The SI unit of volume is ________.\", \"answer\": \"cubic metre\"}\n    ],\n    \"true_false\": [\n        {\"question\": \"Matter is made up of particles.\", \"answer\": \"True\"}\n    ],\n    \"match_the_following\": [\n        {\"column_A\": \"Solid\", \"column_B\": \"Fixed shape\", \"match\": \"A-B\"}\n    ]\n}"
+            }
+          ]
         },
         {
           "name": "Generate Lesson Plan",
@@ -249,7 +486,29 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "Example Lesson Plan",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/generate/lesson_plan?session_id={{sessionId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["generate", "lesson_plan"],
+                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "cookie": [],
+              "body": "{\n    \"learning_objectives\": [\"Understand the physical nature of matter\"],\n    \"teaching_steps\": [\"Introduce matter through day-to-day examples\"],\n    \"assessment\": [\"Define matter\"]\n}"
+            }
+          ]
         }
       ]
     }

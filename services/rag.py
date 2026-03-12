@@ -29,7 +29,7 @@ def get_context(vector_store, task: str, session_id: str, k: int = 6) -> str:
     logger.info(f"Hybrid search: task={task}, query='{query}', k={k}")
 
     # Step 1: Vector search (retrieve k*3 candidates for reranking)
-    vector_docs = vector_store.max_marginal_relevance_search(query, k=k * 3)
+    vector_docs = vector_store.max_marginal_relevance_search(query, k=20)
     logger.info(f"Vector MMR returned {len(vector_docs)} docs")
 
     # Step 2: BM25 keyword search

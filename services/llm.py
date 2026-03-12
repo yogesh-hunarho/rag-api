@@ -9,7 +9,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-def get_llm(temperature=0.3, top_p=0.9, max_tokens=10000):
+def get_llm(temperature=0.3, top_p=0.9, max_tokens=8000):
     return ChatGoogleGenerativeAI(
         model="gemini-2.5-flash",
         temperature=temperature,

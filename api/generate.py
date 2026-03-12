@@ -25,21 +25,23 @@ from services.prompts import (
 )
 from services.llm import get_llm, get_llm_for_mindmap, invoke_llm
 from utils.errors import APIError, ErrorCode
-from schemas.responses import QuestionPaperResponse, LessonPlanResponse, NotesResponse, SummaryResponse, WorksheetResponse
+from schemas.responses import QuestionPaperResponse
+from json_repair import repair_json
+
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
 # Question types that benefit from two-step concept extraction
-CONCEPT_EXTRACTION_TYPES = {
-    GenerateType.only_mcq,
-    GenerateType.only_fill_blank,
-    GenerateType.only_short_question,
-    GenerateType.only_long_question,
-    GenerateType.only_case_base,
-    GenerateType.worksheet,
-}
+# CONCEPT_EXTRACTION_TYPES = {
+#     GenerateType.only_mcq,
+#     GenerateType.only_fill_blank,
+#     GenerateType.only_short_question,
+#     GenerateType.only_long_question,
+#     GenerateType.only_case_base,
+#     GenerateType.worksheet,
+# }
 
 
 def _validate_session_id(session_id: str) -> str:
@@ -75,7 +77,7 @@ def _load_chapter_text(session_id: str) -> tuple[str, str]:
     return text, base
 
 
-def _run_rag_pipeline(session_id: str, content_type, k: int = 6) -> tuple[str, str]:
+def _run_rag_pipeline(session_id: str, content_type, k: int = 20) -> tuple[str, str]:
     """
     Run the common RAG pipeline: validate → vector store → hybrid retrieval → context.
     Returns (context, base_path).
@@ -171,9 +173,9 @@ K_CONFIG = {
 @router.post("/question_paper", response_model=QuestionPaperResponse)
 def generate_question_paper(session_id: str, blueprint: PaperBlueprint):
     """Generate a structured question paper based on the blueprint."""
-    context, base = _run_rag_pipeline(session_id, ContentType.question_paper)
+    context, base = _run_rag_pipeline(session_id, ContentType.question_paper, k=8)
 
-    llm = get_llm()
+    llm = get_llm(temperature=0.3, top_p=0.9, max_tokens=12000)
     prompt = QUESTION_PAPER_PROMPT.format(
         class_=blueprint.class_,
         subject=blueprint.subject,
@@ -188,13 +190,20 @@ def generate_question_paper(session_id: str, blueprint: PaperBlueprint):
 
     try:
         paper = json.loads(response.content)
-    except Exception:
-        logger.error(f"Invalid JSON from LLM for question_paper: {response.content[:200]}")
-        raise APIError(
-            500, ErrorCode.INVALID_LLM_RESPONSE,
-            "AI returned an invalid response for the question paper. Please try again.",
-            retry=True,
-        )
+    except json.JSONDecodeError:
+        try:
+            repaired = repair_json(response.content)
+            paper = json.loads(repaired)
+            logger.warning("LLM JSON repaired automatically")
+        except Exception:
+            logger.error(f"Invalid JSON from LLM: {response.content[:500]}")
+            raise APIError(500,ErrorCode.INVALID_LLM_RESPONSE,"AI returned an invalid response for the question paper.",retry=True,)
+        # logger.error(f"Invalid JSON from LLM for question_paper: {response.content[:200]}")
+        # raise APIError(
+        #     500, ErrorCode.INVALID_LLM_RESPONSE,
+        #     "AI returned an invalid response for the question paper. Please try again.",
+        #     retry=True,
+        # )
 
     _save_output(base, "question_paper.json", paper)
     return paper
@@ -238,27 +247,28 @@ def generate_question_type(question_type: GenerateType, session_id: str):
         max_tokens=config["max_tokens"],
     )
 
-    # Two-step generation: extract concepts first, then generate questions
-    # Only for question types — summaries, notes, lesson_plan skip this step
-    if question_type in CONCEPT_EXTRACTION_TYPES:
-        logger.info(f"Running concept extraction for {question_type.value}")
-        concept_prompt = CONCEPT_EXTRACTION_PROMPT.format(context=context)
-        concept_response = invoke_llm(llm, concept_prompt)
+    # # Two-step generation: extract concepts first, then generate questions
+    # # Only for question types — summaries, notes, lesson_plan skip this step
+    # if question_type in CONCEPT_EXTRACTION_TYPES:
+    #     logger.info(f"Running concept extraction for {question_type.value}")
+    #     concept_prompt = CONCEPT_EXTRACTION_PROMPT.format(context=context)
+    #     concept_response = invoke_llm(llm, concept_prompt)
 
-        try:
-            concept_data = json.loads(concept_response.content)
-            concepts = concept_data["concepts"]
-        except Exception:
-            logger.warning("Concept extraction failed, proceeding without concepts")
-            concepts = []
+    #     try:
+    #         concept_data = json.loads(concept_response.content)
+    #         concepts = concept_data["concepts"]
+    #     except Exception:
+    #         logger.warning("Concept extraction failed, proceeding without concepts")
+    #         concepts = []
 
-        prompt = GENERATE_TYPE_PROMPT_MAP[question_type].format(
-            context=context,
-            concepts="\n".join(concepts),
-        )
-    else:
-        prompt = GENERATE_TYPE_PROMPT_MAP[question_type].format(context=context)
-
+    #     prompt = GENERATE_TYPE_PROMPT_MAP[question_type].format(
+    #         context=context,
+    #         concepts="\n".join(concepts),
+    #     )
+    # else:
+    #     prompt = GENERATE_TYPE_PROMPT_MAP[question_type].format(context=context)
+    
+    prompt = GENERATE_TYPE_PROMPT_MAP[question_type].format(context=context)
     response = invoke_llm(llm, prompt)
 
     try:

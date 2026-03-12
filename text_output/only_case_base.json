@@ -1,0 +1,158 @@
+[
+  {
+    "case_title": "Properties of Matter: Particle Size and Dilution",
+    "context": "Fig. 1.2: Estimating how small are the particles of matter. With every dilution, though the colour becomes light, it is still visible. This experiment shows that just a few crystals of potassium permanganate can colour a large volume of water (about 1000 L). So we conclude that there must be millions of tiny particles in just one crystal of potassium permanganate, which keep on dividing themselves into smaller and smaller particles. The same activity can be done using 2 mL of Dettol instead of potassium permanganate. The smell can be detected even on repeated dilution. The particles of matter are very small – they are small beyond our imagination!!!!",
+    "sub_questions": [
+      {
+        "question": "What conclusion can be drawn about the number of particles in one crystal of potassium permanganate based on the experiment?",
+        "answer": "There must be millions of tiny particles in just one crystal of potassium permanganate.",
+        "figure_reference": "Fig. 1.2",
+        "marks": 1,
+        "difficulty": "easy"
+      },
+      {
+        "question": "What alternative substance, besides potassium permanganate, can be used to demonstrate the smallness of particles through repeated dilution?",
+        "answer": "2 mL of Dettol.",
+        "figure_reference": null,
+        "marks": 1,
+        "difficulty": "easy"
+      },
+      {
+        "question": "Describe the observation made regarding the colour of potassium permanganate solution with every dilution.",
+        "answer": "With every dilution, though the colour becomes light, it is still visible.",
+        "figure_reference": "Fig. 1.2",
+        "marks": 2,
+        "difficulty": "medium"
+      },
+      {
+        "question": "Explain how the experiment with potassium permanganate supports the idea that particles of matter are very small.",
+        "answer": "This experiment shows that just a few crystals of potassium permanganate can colour a large volume of water (about 1000 L). So we conclude that there must be millions of tiny particles in just one crystal of potassium permanganate, which keep on dividing themselves into smaller and smaller particles.",
+        "figure_reference": "Fig. 1.2",
+        "marks": 3,
+        "difficulty": "hard"
+      }
+    ]
+  },
+  {
+    "case_title": "Phase Changes: Evaporation and Boiling",
+    "context": "This phenomenon of change of liquid into vapours at any temperature below its boiling point is called evaporation. Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state. The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed. Evaporation causes cooling. Boiling is a bulk phenomenon. Particles from the bulk (whole) of the liquid change into vapour state.",
+    "sub_questions": [
+      {
+        "question": "Define evaporation.",
+        "answer": "This phenomenon of change of liquid into vapours at any temperature below its boiling point is called evaporation.",
+        "figure_reference": null,
+        "marks": 1,
+        "difficulty": "easy"
+      },
+      {
+        "question": "What kind of phenomenon is boiling?",
+        "answer": "Boiling is a bulk phenomenon.",
+        "figure_reference": null,
+        "marks": 1,
+        "difficulty": "easy"
+      },
+      {
+        "question": "Explain why evaporation is considered a surface phenomenon.",
+        "answer": "Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state.",
+        "figure_reference": null,
+        "marks": 2,
+        "difficulty": "medium"
+      },
+      {
+        "question": "List the factors upon which the rate of evaporation depends.",
+        "answer": "The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed.",
+        "figure_reference": null,
+        "marks": 3,
+        "difficulty": "hard"
+      },
+      {
+        "question": "What effect does evaporation have on temperature?",
+        "answer": "Evaporation causes cooling.",
+        "figure_reference": null,
+        "marks": 1,
+        "difficulty": "easy"
+      }
+    ]
+  },
+  {
+    "case_title": "Direct Phase Changes: Sublimation and Deposition",
+    "context": "Sublimation is the change of solid state directly to gaseous state without going through liquid state. Deposition is the change of gaseous state directly to solid state without going through liquid state.",
+    "sub_questions": [
+      {
+        "question": "What is sublimation?",
+        "answer": "Sublimation is the change of solid state directly to gaseous state without going through liquid state.",
+        "figure_reference": null,
+        "marks": 1,
+        "difficulty": "easy"
+      },
+      {
+        "question": "What is deposition?",
+        "answer": "Deposition is the change of gaseous state directly to solid state without going through liquid state.",
+        "figure_reference": null,
+        "marks": 1,
+        "difficulty": "easy"
+      },
+      {
+        "question": "How do sublimation and deposition differ from typical phase changes involving a liquid state?",
+        "answer": "Sublimation is the change of solid state directly to gaseous state without going through liquid state. Deposition is the change of gaseous state directly to solid state without going through liquid state.",
+        "figure_reference": null,
+        "marks": 2,
+        "difficulty": "medium"
+      }
+    ]
+  },
+  {
+    "case_title": "Effect of Temperature on Particles in Solids",
+    "context": "On increasing the temperature of solids, the kinetic energy of the particles increases. Due to the increase in kinetic energy, the particles start vibrating with greater speed. The energy supplied by heat overcomes the forces of attraction between the particles. The particles leave their fixed positions and start",
+    "sub_questions": [
+      {
+        "question": "What happens to the kinetic energy of particles when the temperature of solids is increased?",
+        "answer": "On increasing the temperature of solids, the kinetic energy of the particles increases.",
+        "figure_reference": null,
+        "marks": 1,
+        "difficulty": "easy"
+      },
+      {
+        "question": "Describe the movement of particles in a solid when its temperature is increased.",
+        "answer": "Due to the increase in kinetic energy, the particles start vibrating with greater speed.",
+        "figure_reference": null,
+        "marks": 2,
+        "difficulty": "medium"
+      },
+      {
+        "question": "How does the energy supplied by heat affect the forces of attraction between particles in a solid?",
+        "answer": "The energy supplied by heat overcomes the forces of attraction between the particles.",
+        "figure_reference": null,
+        "marks": 3,
+        "difficulty": "hard"
+      }
+    ]
+  },
+  {
+    "case_title": "Pressure Exerted by Gas Particles",
+    "context": "Particles just move about randomly. Due to this random movement, the particles hit each other and also the walls of the container. The pressure exerted by the gas is because of this force exerted by gas particles per unit area on the walls of the container.",
+    "sub_questions": [
+      {
+        "question": "How do gas particles move?",
+        "answer": "Particles just move about randomly.",
+        "figure_reference": null,
+        "marks": 1,
+        "difficulty": "easy"
+      },
+      {
+        "question": "What causes the pressure exerted by a gas?",
+        "answer": "The pressure exerted by the gas is because of this force exerted by gas particles per unit area on the walls of the container.",
+        "figure_reference": null,
+        "marks": 2,
+        "difficulty": "medium"
+      },
+      {
+        "question": "Describe the interaction of gas particles that leads to the exertion of pressure.",
+        "answer": "Due to this random movement, the particles hit each other and also the walls of the container. The pressure exerted by the gas is because of this force exerted by gas particles per unit area on the walls of the container.",
+        "figure_reference": null,
+        "marks": 3,
+        "difficulty": "hard"
+      }
+    ]
+  }
+]

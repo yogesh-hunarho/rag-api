@@ -20,7 +20,9 @@ def preload_reranker():
 def rerank(query, docs, top_k=6):
     model = get_reranker()
 
-    pairs = [[query, d] for d in docs]
+    # pairs = [[query, d] for d in docs]
+    
+    pairs = [[query, d.page_content if hasattr(d, "page_content") else d] for d in docs]
 
     scores = model.predict(pairs)
 

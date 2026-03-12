@@ -161,8 +161,6 @@ QUESTION DISTRIBUTION RULE:
 - Generate questions covering ALL concepts
 - Each concept should produce at least one question
 
-CONCEPTS:
-{concepts}
 
 WORKSHEET STRUCTURE:
 - Fill in the Blanks: key terms or concepts
@@ -192,7 +190,7 @@ QUESTION_PAPER_PROMPT ="""
 You are a CBSE/NCERT exam paper setter.
 DIFFICULTY RULES (STRICT):
 - easy: direct definition, one-line fact, naming
-- medium: explanation using 2–3 sentences from text
+- medium: explanation using 2-3 sentences from text
 - hard: reasoning or comparison explicitly present in text
 
 ABSOLUTE RULES (NO EXCEPTIONS):
@@ -211,11 +209,14 @@ ABSOLUTE RULES (NO EXCEPTIONS):
 - NO trailing commas
 - NO markdown
 
-MATH RULES:
+MATH / FORMULA RULES:
 - For mathematics, represent equations using LaTeX
-- LaTeX must be compatible with KaTeX
+- LaTeX MUST be compatible with KaTeX
 - Do NOT invent formulas
 - Use ONLY formulas present in the text
+- If the text contains [FORMULA]...[/FORMULA] tags, copy the formula content EXACTLY as-is
+- Use standard JSON string escaping: one backslash becomes two in JSON (e.g. \\frac not \\\\frac)
+- For inline math use $...$ and for display math use $$...$$
 
 FIGURE HANDLING (MANDATORY):
 - If a question refers to any diagram, experiment, or illustration:
@@ -231,10 +232,12 @@ MCQ:
 - Distractors may be short phrases derived from the same sentence but must not introduce new knowledge.
 - One and only one correct option
 - Provide "correct_index"
+- All keys MUST be quoted using double quotes.
 
 Fill in the blanks:
 - Remove EXACTLY ONE word or phrase
 - The removed text must exist verbatim in the chapter
+- All keys MUST be quoted using double quotes.
 
 Short / Long Answer:
 - Question sentence MUST match one of these patterns AND exist in text:
@@ -244,6 +247,7 @@ Short / Long Answer:
   - "Write ..."
   - "Name ..."
 - Answer MUST be copied verbatim from the chapter text
+- If figure is referenced in question, set "figure_reference" in json directly,
 - Multi-sentence answers must preserve original order
 
 MARKS BLUEPRINT (STRICT):
@@ -257,7 +261,6 @@ OUTPUT JSON FORMAT (STRICT — DO NOT CHANGE):
       "options": ["", "", "", ""],
       "correct_index": 0,
       "marks": 1,
-      "figure_reference": null,
       "difficulty": "easy"
     }}
   ],
@@ -265,7 +268,6 @@ OUTPUT JSON FORMAT (STRICT — DO NOT CHANGE):
     {{
       "question": "",
       "answer": "",
-      "figure_reference": null,
       "marks": 1,
       "difficulty": "easy"
     }}
@@ -324,7 +326,7 @@ JSON FORMAT:
 COMMON_RULES = """
 DIFFICULTY RULES (STRICT):
 - easy: direct definition, one-line fact, or naming from the text
-- medium: explanation requiring 2–3 related sentences from the text
+- medium: explanation requiring 2-3 related sentences from the text
 - hard: reasoning or comparison explicitly stated in the text
 
 ABSOLUTE CONTEXT RULES (NO EXCEPTIONS):
@@ -356,11 +358,27 @@ FIGURE HANDLING (MANDATORY):
 
 STEM SAFETY RULES (MANDATORY):
 - All mathematical expressions MUST be written in LaTeX
-- LaTeX MUST be compatible with KaTeX
+- LaTeX MUST be compatible with KaTeX rendering
 - LaTeX MUST appear inside JSON strings
 - Do NOT introduce formulas not present in the Chapter Text
 - Copy formulas exactly as written in the Chapter Text
 - Preserve subscripts, superscripts, arrows, and units exactly
+- If the Chapter Text contains [FORMULA]...[/FORMULA] tags, copy the formula content EXACTLY
+- Use $...$ for inline math and $$...$$ for display math
+
+KaTeX COMPATIBILITY (USE ONLY THESE):
+- Fractions: \\frac{a}{b}
+- Square root: \\sqrt{x}, \\sqrt[n]{x}
+- Superscript: x^{2}, x^{n+1}
+- Subscript: x_{1}, a_{n}
+- Greek letters: \\alpha, \\beta, \\gamma, \\theta, \\lambda, \\mu, \\pi, \\sigma, \\omega
+- Vectors: \\vec{F}, \\hat{i}
+- Operators: \\times, \\div, \\pm, \\cdot, \\leq, \\geq, \\neq, \\approx
+- Arrows: \\rightarrow, \\leftarrow, \\Rightarrow
+- Functions: \\sin, \\cos, \\tan, \\log, \\ln
+- Integrals/Sums: \\int, \\sum, \\prod, \\lim
+- DO NOT USE: \\ce{} (mhchem), \\chemfig, \\tikz, \\cancel, environments like align* or equation*
+- For chemical formulas use subscripts: H_2O not \\ce{H2O}
 
 CONTEXT SAFETY RULE:
 - If sufficient information is not present in the Chapter Text, return an empty JSON structure instead of guessing.
@@ -374,7 +392,7 @@ JSON OUTPUT RULES (STRICT):
 - NO wrapper objects unless explicitly required
 - NO extra keys
 - NO trailing commas
-- Escape all backslashes in LaTeX as \\\\
+- Use standard JSON escaping for backslashes: \\frac is correct (NOT \\\\frac)
 - Do NOT include unescaped newline characters inside JSON strings
 - Use plain ASCII text outside LaTeX
 """
@@ -394,9 +412,6 @@ QUESTION DISTRIBUTION RULE:
 - Generate questions covering ALL concepts
 - Each concept should produce at least one question
 
-CONCEPTS:
-{concepts}
-
 OUTPUT JSON FORMAT (STRICT):
 [
   {{
@@ -404,7 +419,6 @@ OUTPUT JSON FORMAT (STRICT):
     "options": ["", "", "", ""],
     "correct_index": 0 | 1 | 2 | 3,
     "marks": 1,
-    "figure_reference": null,
     "source_sentence":"",
     "difficulty": "easy"
   }}
@@ -442,9 +456,6 @@ QUESTION DISTRIBUTION RULE:
 - Generate questions covering ALL concepts
 - Each concept should produce at least one question
 
-CONCEPTS:
-{concepts}
-
 QUESTION FORMAT:
 - Replace the removed text with exactly "_________"
 - The sentence must remain grammatically correct
@@ -455,6 +466,7 @@ OUTPUT JSON FORMAT (STRICT):
     "question": "",
     "answer": "",
     "marks": 1,
+    "source_sentence":"",
     "difficulty": "easy"
   }}
 ]
@@ -478,6 +490,7 @@ IMAGE / DIAGRAM HANDLING RULES:
 - Questions MUST NOT mention:
   "Fig.", "Figure", figure numbers (e.g., 1.1, 2.3), or image labels
 - Do NOT use exact figure captions as questions
+- "figure_reference" in json directly
 
 ANSWER RULES:
 - Answers MUST NOT mention or depend on:
@@ -493,9 +506,6 @@ QUESTION QUALITY RULES:
 QUESTION DISTRIBUTION RULE:
 - Generate questions covering ALL concepts
 - Each concept should produce at least one question
-
-CONCEPTS:
-{concepts}
 
 OUTPUT JSON FORMAT (STRICT):
 [
@@ -530,9 +540,6 @@ QUESTION DISTRIBUTION RULE:
 - Generate questions covering ALL concepts
 - Each concept should produce at least one question
 
-CONCEPTS:
-{concepts}
-
 OUTPUT JSON FORMAT (STRICT):
 [
   {{
@@ -555,9 +562,6 @@ Generate Case-based Questions from the given text. A case-based question include
 QUESTION DISTRIBUTION RULE:
 - Generate questions covering ALL concepts
 - Each concept should produce at least one question
-
-CONCEPTS:
-{concepts}
 
 OUTPUT JSON FORMAT (STRICT):
 [
