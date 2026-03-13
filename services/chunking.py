@@ -49,15 +49,35 @@ FIG_PATTERN = re.compile(r"(Fig\.?\s*\d+(\.\d+)?)", re.IGNORECASE)
 SECTION_HEADER_RE = re.compile(
     r"(?:^|\n)"
     r"("
-    r"Chapter\s+\d+[^\n]*"
+    r"\d+\.\d+\s+[A-Z][^\n]+"
     r"|Section\s+\d+[^\n]*"
-    r"|\d+\.\d+(?:\.\d+)?\s+[^\n]*"
+    r"|Chapter\s+\d+[^\n]*"
+    r"|Exercise\s+\d+[^\n]*"
     r"|Example\s+\d+[^\n]*"
     r"|Activity\s+\d+[^\n]*"
     r"|Table\s+\d+[^\n]*"
+    r"|Definition\s+[^\n]*"
     r"|[A-Z][A-Z\s]{5,}"
     r")",
     re.IGNORECASE,
+)
+
+EXERCISE_BLOCK_RE = re.compile(
+    r"(?:^|\n)(?:"
+    r"\d+[\.\)]\s"                # 1. or 1)
+    r"|[a-z][\.\)]\s"             # a. or a)
+    r"|\([ivx]+\)\s"              # (i), (ii), etc.
+    r"|Question\s+\d+"            # Question 1
+    r"|Exercise\s+\d+"            # Exercise 2
+    r"|Try\s+this"                # Try this
+    r"|Figure\s+it\s+out"         # Figure it out
+    r")",
+    re.IGNORECASE
+)
+
+DEFINITION_BLOCK_RE = re.compile(
+    r"^(?:Definition:?|Note:?|Key\s+Concept:?)\s+",
+    re.IGNORECASE | re.MULTILINE
 )
 
 # ---------------------------------------------------------------------------
@@ -113,6 +133,132 @@ OCR_MATH_FIXES = [
     (re.compile(r"\bomega\b", re.I), r"\\omega"),
 ]
 
+# ---------------------------------------------------------------------------
+# Advanced OCR Cleanup (Req #1)
+# ---------------------------------------------------------------------------
+
+def remove_ocr_artifacts(text: str) -> str:
+    """
+    Remove common OCR artifacts like page numbers, headers, footers, 
+    and timestamps.
+    """
+    # Remove page numbers like "Page 12", "12 of 45", or just a digit on its own line
+    text = re.sub(r"(?m)^\s*(?:Page\s+)?\d+(?:\s+of\s+\d+)?\s*$", "", text)
+    
+    # Remove strings like "Chapter 22..in 1199 77//1100//22002255"
+    text = re.sub(r"(?m)^.*Chapter\s+\d+\.\.in\s+\d+.*$", "", text, flags=re.I)
+    
+    # Remove stamps like "Ganita Prakash | Grade 8"
+    text = re.sub(r"(?m)^.*Ganita\s+Prakash\s*\|\s*Grade\s+\d+.*$", "", text, flags=re.I)
+
+    # Remove timestamps like "12:34:56" or "2024-03-12 16:00"
+    text = re.sub(r"\b\d{1,2}:\d{2}(?::\d{2})?\b", "", text)
+    text = re.sub(r"\b\d{4}-\d{2}-\d{2}\b", "", text)
+    
+    # Remove repeated book titles/subject names (often in headers)
+    # e.g. "Mathematics Grade 8", "Class 8 Mathematics"
+    subjects = "Mathematics|Science|Social Science|History|Geography|English|Physics|Chemistry|Biology"
+    text = re.sub(fr"(?m)^\s*(?:{subjects})\s+(?:Grade|Class)\s+\d+\s*$", "", text, flags=re.I)
+    text = re.sub(fr"(?m)^\s*(?:Grade|Class)\s+\d+\s+(?:{subjects})\s*$", "", text, flags=re.I)
+
+    # Remove repeated publishing/copyright strings
+    text = re.sub(r"(?i)©\s*NCERT|©\s*All\s*rights\s*reserved|Not\s*to\s*be\s*republished", "", text)
+
+    # Remove strings of 3+ repeated characters that aren't likely math symbols (e.g. "----------")
+    text = re.sub(r"(?<![0-9\$])([^\.\s\d\$])\1{2,}(?![0-9\$])", "", text)
+    text = re.sub(r"\.{4,}", "", text) # Remove excessive dots
+    
+    return text
+
+def remove_duplicate_lines(text: str) -> str:
+    """Remove consecutive duplicate lines often produced by OCR."""
+    lines = text.split("\n")
+    if not lines:
+        return text
+    
+    cleaned_lines = []
+    prev_line = None
+    for line in lines:
+        stripped = line.strip()
+        # If line is identical to previous, skip it
+        if stripped and stripped == prev_line:
+            continue
+        cleaned_lines.append(line)
+        if stripped:
+            prev_line = stripped
+            
+    return "\n".join(cleaned_lines)
+
+def normalize_formulas(text: str) -> str:
+    """
+    Normalize OCR-produced math notation into proper LaTeX notation.
+    Example: 0.001 cm x 22 -> 0.001 cm x 2^2
+    """
+    # Fix 22 -> 2² pattern for simple exponents often lost in OCR
+    # Only if it looks like a power of a number
+    def _power_repl(match):
+        base = match.group(1)
+        exp = match.group(2)
+        # Avoid common words/numbers that aren't powers
+        if base in ["11", "22", "33"] and exp == base[0]:
+             return match.group(0)
+        return f"{base}^{{{exp}}}"
+
+    # Matches digit followed by same digit (very basic, but requested)
+    # text = re.sub(r"(\d)(\1)", _power_repl, text)
+    
+    # Better: match known patterns like 22, 10-2, etc.
+    # But specifically user requested: 0.001 cm x 22 -> 0.001 cm x 2^2
+    # Fix for the specific example and similar patterns
+    text = re.sub(r"(\d)\s*[x×]\s*(\d)(\2)\b", r"\1 \\times \2^{2}", text)
+    
+    # Also handle things like 102 -> 10^2 if it follows a number
+    text = re.sub(r"(\d{1,2})([23])\b", r"\1^{\2}", text)
+
+    return text
+
+def fix_repeated_chars(text: str) -> str:
+    """
+    Fix stuttering OCR text like 'CChhaapptteerr' -> 'Chapter' 
+    or 'PPhhyyssiiccss' -> 'Physics'.
+    """
+    # Matches patterns where each character is repeated: XYXY -> XY
+    # Uses a lookahead to ensure we are matching doubling
+    # e.g., CChhaapptteerr -> C h a p t e r
+    # This regex looks for 4+ chars where every even char matches the previous one
+    def _de_stutter(match):
+        s = match.group(0)
+        # Check if it's actually stuttered: char 0==1, 2==3, etc.
+        if all(s[i] == s[i+1] for i in range(0, len(s), 2)):
+            return "".join(s[i] for i in range(0, len(s), 2))
+        return s
+
+    return re.sub(r"\b(?:[A-Za-z]{2,})\b", _de_stutter, text)
+
+# ---------------------------------------------------------------------------
+# Math Exponent Conversion (Req #5)
+# ---------------------------------------------------------------------------
+
+def convert_mult_to_exponent(text: str) -> str:
+    """
+    Convert repeated multiplication like 'x * x * x' to 'x^3'.
+    Only works for simple variables to avoid false positives.
+    """
+    def _repl(match):
+        full_match = match.group(0)
+        var = match.group(1).strip()
+        # Find which operator was used (* or ×)
+        op = "*" if "*" in full_match else "×"
+        count = full_match.count(op) + 1
+        return f"{var}^{{{count}}}"
+
+    # Matches x * x * x where x is a variable or digit
+    # Pattern explanation:
+    # ((?:\b\w+\b|\d+)) -> Group 1: variable or number
+    # (\s*[*×]\s*\1)+ -> One or more repetitions of (operator + variable)
+    pattern = r"((?:\b\w+\b|\d+))(\s*[*×]\s*\1)+"
+    return re.sub(pattern, _repl, text, flags=re.IGNORECASE)
+
 
 def _convert_unicode_scripts(text: str) -> str:
     """Convert Unicode superscript/subscript chars to LaTeX ^ and _ notation."""
@@ -159,11 +305,8 @@ def convert_ocr_to_latex(text: str) -> str:
 
 def convert_tables_to_markdown(text: str) -> str:
     """
-    Detect pipe-delimited table rows (from pdfplumber) and convert them
-    to proper markdown tables.
-
-    pdfplumber outputs tables as: "col1 | col2 | col3"
-    We detect consecutive pipe-delimited lines and format them.
+    Detect pipe-delimited table rows (from pdfplumber) or space-aligned 
+    table-like structures and convert them to proper markdown tables.
     """
     lines = text.split("\n")
     result = []
@@ -171,23 +314,58 @@ def convert_tables_to_markdown(text: str) -> str:
 
     def flush_table():
         if len(table_buffer) < 2:
-            # Not a real table, just return as-is
+            result.extend(table_buffer)
+            return
+
+        # Check if it's pipe-delimited or space-delimited
+        is_pipe = all("|" in row for row in table_buffer)
+        
+        formatted_rows = []
+        max_cols = 0
+        
+        for row in table_buffer:
+            if is_pipe:
+                cells = [c.strip() for c in row.split("|") if c.strip()]
+            else:
+                # Basic space-based splitting for simple tables
+                # Try splitting by 2+ spaces first
+                cells = re.split(r"\s{2,}", row.strip())
+                if len(cells) < 2:
+                    # If not, try common pattern: Digit + Space + Rest
+                    match = re.match(r"^(\d+)\s+(.+)$", row.strip())
+                    if match:
+                        cells = [match.group(1), match.group(2)]
+            
+            if cells:
+                max_cols = max(max_cols, len(cells))
+                formatted_rows.append(cells)
+
+        if not formatted_rows or max_cols < 2:
             result.extend(table_buffer)
             return
 
         # Build markdown table
-        for i, row in enumerate(table_buffer):
-            cells = [c.strip() for c in row.split("|")]
+        for i, cells in enumerate(formatted_rows):
+            # Pad cells if necessary
+            cells += [""] * (max_cols - len(cells))
             md_row = "| " + " | ".join(cells) + " |"
             result.append(md_row)
             if i == 0:
-                # Add header separator
-                result.append("| " + " | ".join(["---"] * len(cells)) + " |")
+                result.append("| " + " | ".join(["----"] * max_cols) + " |")
 
     for line in lines:
         stripped = line.strip()
-        if "|" in stripped and len(stripped.split("|")) >= 2:
-            table_buffer.append(stripped)
+        # Detect table line: pipe-delimited or contains multiple gaps of spaces (2+ spaces)
+        # Or starts with a digit/identifier followed by values
+        # Or looks like a header (all caps/bold) followed by values
+        parts = re.split(r"\s{2,}", stripped)
+        is_table_line = ("|" in stripped and stripped.count("|") >= 1) or \
+                         (len(parts) >= 2) or \
+                         (bool(re.match(r"^\d+\s+\d+", stripped)))
+        
+        if is_table_line and stripped:
+            # Use original line to preserve spacing for table parsing
+            table_buffer.append(line) 
         else:
             if table_buffer:
                 flush_table()
@@ -284,6 +462,11 @@ def reconstruct_paragraphs(text: str) -> str:
 
         lines = para.split("\n")
 
+        # If it's a table-like structure, don't merge lines
+        if any("|" in l or len(re.split(r"\s{2,}", l.strip())) >= 2 for l in lines):
+            rebuilt.append(para)
+            continue
+
         if len(lines) == 1:
             rebuilt.append(lines[0].strip())
             continue
@@ -294,10 +477,7 @@ def reconstruct_paragraphs(text: str) -> str:
             if not line:
                 continue
 
-            is_heading = bool(re.match(
-                r"^(?:Chapter\s+\d|Section\s+\d|\d+\.\d+\s+[A-Z]|Example\s+\d|Activity\s+\d|Table\s+\d)",
-                line, re.IGNORECASE
-            ))
+            is_heading = bool(SECTION_HEADER_RE.match(line))
             is_allcaps = bool(re.match(r"^[A-Z][A-Z\s]{5,}$", line))
             is_list_item = bool(re.match(r"^[\•\-\*\d]+[\.\)]\s", line))
 
@@ -320,15 +500,32 @@ def reconstruct_paragraphs(text: str) -> str:
 # ---------------------------------------------------------------------------
 
 def clean_ocr_text(text: str) -> str:
-    """Fix common OCR artifacts without destroying LaTeX formulas."""
+    """
+    Fix common OCR artifacts without destroying LaTeX formulas.
+    """
+    # Protect math
     text, math_regions = _protect_math_regions(text)
 
+    # Req #1: Remove artifacts and fix doubling
+    text = remove_ocr_artifacts(text)
+    text = fix_repeated_chars(text)
+    text = remove_duplicate_lines(text)
+    
+    # Req #8: Normalize formulas
+    text = normalize_formulas(text)
+
+    # Basic cleanup
     text = re.sub(r"[^\S\n]+", " ", text)
     text = re.sub(r"([a-z])([A-Z])", r"\1 \2", text)
     text = re.sub(r"\n +", "\n", text)
     text = re.sub(r" +\n", "\n", text)
 
+    # Restore math
     text = _restore_math_regions(text, math_regions)
+    
+    # Req #5: Convert exponents (outside protected math if needed, but safe here)
+    text = convert_mult_to_exponent(text)
+
     return text.strip()
 
 
@@ -366,18 +563,24 @@ def split_into_sections(text: str) -> List[Dict]:
 
 
 def detect_type(text: str) -> str:
-    """Identify content type from the first 200 chars."""
-    sample = text[:200].lower()
+    """
+    Identify content type from the first 200 chars.
+    Priority: exercise → definition → example → table → formula → concept
+    """
+    sample = text[:1500].lower()
+    
+    # Priority: exercise → definition → example → table → formula → concept
+    if re.search(r"exercise\s+\d|question\s+\d|try\s+this|figure\s+it\s+out|\d+[\.\)]\s", sample):
+        return "exercise"
+    if re.search(r"definition|key\s+concept|note:", sample) or DEFINITION_BLOCK_RE.search(sample):
+        return "definition"
     if re.search(r"example\s+\d", sample):
         return "example"
-    if re.search(r"activity\s+\d", sample):
-        return "activity"
-    if re.search(r"fig\.?\s*\d", sample):
-        return "figure"
-    if re.search(r"table\s+\d", sample):
+    if re.search(r"table|\|\s*----+\s*\|", sample) or (sample.count("|") >= 2) or ("| --" in sample):
         return "table"
     if has_math_content(text):
         return "formula"
+    
     return "concept"
 
 
@@ -511,32 +714,28 @@ CHUNK_CONFIG = {
 def _split_preserving_equations(text: str, max_size: int, overlap: int) -> List[str]:
     """
     Split text into chunks while keeping formula + explanation blocks together.
-
-    Strategy:
-    1. Split by \n\n into paragraphs
-    2. Glue equation-explanation paragraphs to their formula
-    3. Accumulate paragraphs until reaching target size
-    4. If a single paragraph > max_size, use sentence splitter as fallback
-    5. Never split inside a $ or $$ pair
+    Ensures chunks never start/end mid-sentence (Req #7).
     """
+    # Ensure we use sentence-aware splitting at the paragraph level first
     paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
 
     if not paragraphs:
         return []
 
-    # Minimum chunk size — keep accumulating until we reach this
     min_size = max(300, max_size // 2)
 
-    # Glue: if a paragraph starts with an equation explanation keyword,
-    # merge it with the previous paragraph (Req #3, #9)
     glued_paragraphs = []
     for para in paragraphs:
-        if glued_paragraphs and EQUATION_EXPLANATION_RE.match(para):
-            glued_paragraphs[-1] = glued_paragraphs[-1] + "\n" + para
+        is_explanation = EQUATION_EXPLANATION_RE.match(para)
+        is_exercise_part = EXERCISE_BLOCK_RE.match(para)
+        is_definition_cont = DEFINITION_BLOCK_RE.match(para)
+
+        # Glue explanation or sub-parts to the previous block
+        if glued_paragraphs and (is_explanation or is_exercise_part or is_definition_cont):
+            glued_paragraphs[-1] = glued_paragraphs[-1] + "\n\n" + para
         else:
             glued_paragraphs.append(para)
 
-    # Build chunks by accumulating paragraphs
     chunks = []
     current = ""
 
@@ -544,48 +743,57 @@ def _split_preserving_equations(text: str, max_size: int, overlap: int) -> List[
         combined = (current + "\n\n" + para).strip() if current else para
 
         if len(combined) <= max_size:
-            # Still under max — keep accumulating
             current = combined
         else:
-            # Combined would exceed max_size.
-            # Only emit if current chunk is large enough on its own.
             if current and len(current) >= min_size:
                 chunks.append(current)
                 current = para
             elif current:
-                # Current is too small to emit alone.
-                # If combined is not absurdly large (< 2x max), keep together.
-                if len(combined) <= max_size * 2:
+                # If current is too small, extend max_size slightly to avoid tiny chunks
+                if len(combined) <= max_size * 1.5:
                     current = combined
                 else:
-                    # Must emit current even though it's small, combined is way too big
                     chunks.append(current)
                     current = para
             else:
                 current = para
 
-            # If current single paragraph is too large, use sentence splitter
             if len(current) > max_size:
-                splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=max_size,
-                    chunk_overlap=overlap,
-                    separators=["\n\n", ". ", "? ", "! ", "\n", " "],
-                )
-                sub_chunks = splitter.split_text(current)
-                sub_chunks = _merge_broken_math(sub_chunks)
-                chunks.extend(sub_chunks[:-1])  # emit all but last
-                current = sub_chunks[-1] if sub_chunks else ""
+                # Sentence-aware splitting within a large paragraph
+                # Req #7: Chunks should never start/end mid-sentence
+                sentences = re.split(r"(?<=[.?!])\s+", current)
+                
+                temp_chunk = ""
+                for s in sentences:
+                    if len(temp_chunk) + len(s) + 1 <= max_size:
+                        temp_chunk = (temp_chunk + " " + s).strip()
+                    else:
+                        if temp_chunk:
+                            chunks.append(temp_chunk)
+                        temp_chunk = s
+                current = temp_chunk
 
     if current:
         chunks.append(current)
 
-    # Add overlap: prepend last `overlap` chars of previous chunk
+    # Post-process overlap with sentence awareness
     if overlap > 0 and len(chunks) > 1:
         overlapped = [chunks[0]]
         for i in range(1, len(chunks)):
-            prev_tail = chunks[i - 1][-overlap:]
-            if "$" not in prev_tail or prev_tail.count("$") % 2 == 0:
-                overlapped.append(prev_tail + " " + chunks[i])
+            prev_chunk = chunks[i-1]
+            sentences = re.split(r"(?<=[.?!])\s+", prev_chunk)
+            
+            overlap_content = ""
+            current_len = 0
+            for s in reversed(sentences):
+                if current_len + len(s) <= overlap:
+                    overlap_content = s + " " + overlap_content
+                    current_len += len(s)
+                else:
+                    break
+            
+            if overlap_content:
+                overlapped.append(overlap_content.strip() + " " + chunks[i])
             else:
                 overlapped.append(chunks[i])
         chunks = overlapped
@@ -653,28 +861,27 @@ def _merge_tiny_chunks(chunks: List[str], min_size: int = 200) -> List[str]:
 
 def chunk_text(text: str, content_type, chapter: str = "") -> List[Dict]:
     """
-    Split text into chunks for vector storage.
-
-    Output format (Req #6, #10):
-    {
-        "content": "...clean text without structural markers...",
-        "metadata": {
-            "chunk_id": 0,
-            "chapter": "...",
-            "section": "...",
-            "type": "concept|formula|example|activity|figure|table",
-            "has_formula": true/false,
-            "formula_count": 2
-        }
-    }
-
-    Formulas are extracted into metadata (formula_count) but NOT
-    duplicated — they remain naturally in the content text.
+    Split text into chunks for vector storage with type-specific sizing and metadata.
     """
-    # Split into semantic sections
+    # 1. OCR Pre-cleaning (preserving whitespace for tables)
+    text = remove_ocr_artifacts(text)
+    text = fix_repeated_chars(text)
+    text = remove_duplicate_lines(text)
+    
+    # 2. Structure reconstruction
+    text = convert_tables_to_markdown(text)
+    text = reconstruct_paragraphs(text)
+    
+    # 3. Content normalization
+    text = normalize_formulas(text)
+    text = convert_ocr_to_latex(text)
+    text = glue_equation_blocks(text)
+
+    # 4. Split into semantic sections
     sections = split_into_sections(text)
 
-    size, overlap = CHUNK_CONFIG[content_type]
+    # Default size/overlap
+    default_size, default_overlap = CHUNK_CONFIG.get(content_type, (800, 120))
 
     chunks = []
 
@@ -686,8 +893,23 @@ def chunk_text(text: str, content_type, chapter: str = "") -> List[Dict]:
             continue
 
         block_type = detect_type(section_text)
+        
+        # Apply type-specific sizing logic (Req #10)
+        # concept → 700–900 characters
+        # example → 600–800 characters
+        # exercise → 500–700 characters
+        if block_type == "concept":
+            size, overlap = (800, 120)
+        elif block_type == "definition":
+            size, overlap = (800, 120)
+        elif block_type == "example":
+            size, overlap = (700, 120)
+        elif block_type == "exercise":
+            size, overlap = (600, 120)
+        else:
+            size, overlap = (default_size, default_overlap)
 
-        # Use paragraph-aware splitting instead of char-based
+        # Use paragraph-aware splitting
         section_chunks = _split_preserving_equations(section_text, size, overlap)
 
         # Post-process
@@ -696,10 +918,10 @@ def chunk_text(text: str, content_type, chapter: str = "") -> List[Dict]:
 
         for chunk_text_str in section_chunks:
             chunk_text_str = chunk_text_str.strip()
-            if not chunk_text_str or len(chunk_text_str) < 50:
+            if not chunk_text_str or len(chunk_text_str) < 30:
                 continue
 
-            # Extract formulas for metadata (Req #10)
+            # Extract formulas for metadata (Req #9)
             formulas = detect_formulas(chunk_text_str)
 
             chunks.append({
@@ -707,12 +929,12 @@ def chunk_text(text: str, content_type, chapter: str = "") -> List[Dict]:
                 "metadata": {
                     "chunk_id": len(chunks),
                     "chapter": chapter,
-                    "section": header[:120] if header else section_text[:80],
+                    "section": header[:120] if header else "",
                     "type": block_type,
                     "has_formula": len(formulas) > 0,
                     "formula_count": len(formulas),
                 }
             })
 
-    logger.info(f"Chunking complete: {len(chunks)} chunks (target: 100-200)")
+    logger.info(f"Chunking complete: {len(chunks)} chunks")
     return chunks
