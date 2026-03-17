@@ -3,13 +3,13 @@ import json
 import time
 import shutil
 import logging
-import re
 from uuid import uuid4, UUID
 
-from fastapi import APIRouter, UploadFile, HTTPException
+from fastapi import APIRouter, UploadFile
+
 from utils.file_parser import extract_text
 from utils.errors import APIError, ErrorCode
-from services.chunking import chunk_text, ContentType, tag_figures, semantic_chunking
+from services.chunking import chunk_text, clean_text, ContentType
 from services.vector_store import get_or_create_store
 from schemas.responses import SessionStartResponse, UploadResponse, DeleteResponse
 
@@ -17,29 +17,6 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 BASE = "tmp/sessions"
-
-FORMULA_PATTERN = re.compile(r"[A-Za-z]+\s*=\s*[^ \n]+")
-DEFINITION_PATTERN = re.compile(r"([A-Z][a-zA-Z\s]+):")
-
-
-def tag_formulas(text: str):
-    """Detect and tag formulas for better RAG retrieval."""
-    formulas = FORMULA_PATTERN.findall(text)
-
-    if formulas:
-        text += "\n\n[FORMULAS]\n" + "\n".join(formulas)
-
-    return text
-
-
-def tag_definitions(text: str):
-    """Tag textbook definitions."""
-    matches = DEFINITION_PATTERN.findall(text)
-
-    for m in matches:
-        text = text.replace(m + ":", f"[DEFINITION] {m}:")
-
-    return text
 
 
 def _validate_session_id(session_id: str) -> str:
@@ -85,29 +62,22 @@ def upload_chapter(session_id: str, chapter: str, file: UploadFile):
     if os.path.exists(chapter_path):
         raise APIError(400, ErrorCode.FILE_ALREADY_UPLOADED, "Chapter already uploaded for this session.")
 
-    # Validate file type
     filename = (file.filename or "").lower()
     if not any(filename.endswith(ext) for ext in [".pdf", ".docx", ".txt"]):
         raise APIError(
-            400, ErrorCode.UNSUPPORTED_FILE,
+            400,
+            ErrorCode.UNSUPPORTED_FILE,
             "Unsupported file type. Please upload a PDF, DOCX, or TXT file.",
         )
 
     try:
-        raw_text = extract_text(file)
-        text = semantic_chunking(
-            text=raw_text,
-            chapter=chapter
-        )
-        # semantic_chunking now handles:
-        #   - Paragraph reconstruction (OCR line merging)
-        #   - LaTeX-safe OCR cleaning
-        #   - OCR → LaTeX conversion
-        #   - Table → Markdown conversion
-        #   - Equation-block gluing
-
+        raw_md = extract_text(file)
+        text = clean_text(raw_md)
     except ValueError as exc:
         raise APIError(400, ErrorCode.UNSUPPORTED_FILE, str(exc))
+    except RuntimeError as exc:
+        logger.error(f"File extraction dependency error: {exc}")
+        raise APIError(500, ErrorCode.FILE_IO_ERROR, str(exc))
     except Exception as exc:
         logger.error(f"File extraction failed: {exc}")
         raise APIError(500, ErrorCode.FILE_IO_ERROR, "Failed to extract text from the uploaded file.")
@@ -122,14 +92,14 @@ def upload_chapter(session_id: str, chapter: str, file: UploadFile):
         logger.error(f"Failed to save chapter text: {exc}")
         raise APIError(500, ErrorCode.FILE_IO_ERROR, "Failed to save chapter text.")
 
-    # Create vector store immediately
     try:
-        chunks = chunk_text(text, content_type=ContentType.question_paper, chapter=chapter)
-        get_or_create_store(session_id, chunks, content_type="question_paper")
+        chunks = chunk_text(text, chapter)
+        get_or_create_store(session_id, chunks, content_type=ContentType.question_paper.value)
     except Exception as exc:
         logger.error(f"Vector store creation failed: {exc}")
         raise APIError(
-            500, ErrorCode.VECTOR_STORE_ERROR,
+            500,
+            ErrorCode.VECTOR_STORE_ERROR,
             "Failed to create vector store from the uploaded chapter. Please try again.",
         )
 

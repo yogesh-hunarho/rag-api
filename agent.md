@@ -433,43 +433,44 @@ def get_or_create_store(session_id: str, chunks):
     return db
 
 <!-- chunking.py -->
+import re
 from enum import Enum
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 class ContentType(str, Enum):
-    summary = "summary"
-    notes = "notes"
-    mindmap = "mindmap"
-    worksheet = "worksheet"
-    lesson_plan = "lesson_plan",
-    question_paper = "question_paper" 
+    question_paper = "question_paper"
 
-CHUNK_CONFIG = {
-    ContentType.summary: (1500, 200),
-    ContentType.notes: (1000, 150),
-    ContentType.mindmap: (800, 100),
-    ContentType.worksheet: (700, 100),
-    ContentType.lesson_plan: (1200, 200),
-    ContentType.question_paper: (900, 150),
-}
+def clean_text(text: str) -> str:
+    text = text.replace("\r\n", "\n")
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
 
-def chunk_text(text: str, content_type: ContentType):
-    size, overlap = CHUNK_CONFIG[content_type]
+def chunk_text(text: str, chapter: str):
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=size,
-        chunk_overlap=overlap,
+        chunk_size=1000,
+        chunk_overlap=150,
+        separators=["\n## ", "\n### ", "\n\n", "\n", ". "],
     )
-    return splitter.split_text(text)
+    chunks = splitter.split_text(text)
+    return [
+        {"content": c, "metadata": {"chapter": chapter, "has_math": "$" in c or "\\(" in c}}
+        for c in chunks
+    ]
 
 <!-- file_parser.py -->
-import fitz, docx
+import docx
+import pymupdf4llm
+import pymupdf
 
 def extract_text(file):
     name = file.filename.lower()
 
     if name.endswith(".pdf"):
-        doc = fitz.open(stream=file.file.read(), filetype="pdf")
-        return " ".join(page.get_text() for page in doc)
+        doc = pymupdf.open(stream=file.file.read(), filetype="pdf")
+        try:
+            return pymupdf4llm.to_markdown(doc)
+        finally:
+            doc.close()
 
     if name.endswith(".docx"):
         d = docx.Document(file.file)
