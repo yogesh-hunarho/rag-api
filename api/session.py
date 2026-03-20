@@ -5,7 +5,7 @@ import shutil
 import logging
 from uuid import uuid4, UUID
 
-from fastapi import APIRouter, UploadFile
+from fastapi import APIRouter, Form, UploadFile
 
 from utils.file_parser import extract_text
 from utils.errors import APIError, ErrorCode
@@ -51,7 +51,12 @@ def start_session():
 
 
 @router.post("/{session_id}/upload", response_model=UploadResponse)
-def upload_chapter(session_id: str, chapter: str, file: UploadFile):
+def upload_chapter(
+    session_id: str,
+    file: UploadFile,
+    chapter: str = Form(...),
+    language: str = Form("auto"),
+):
     session_id = _validate_session_id(session_id)
     base = os.path.join(BASE, session_id)
 
@@ -71,13 +76,16 @@ def upload_chapter(session_id: str, chapter: str, file: UploadFile):
         )
 
     try:
-        raw_md = extract_text(file)
+        raw_md = extract_text(file, language=language)
         text = clean_text(raw_md)
     except ValueError as exc:
         raise APIError(400, ErrorCode.UNSUPPORTED_FILE, str(exc))
     except RuntimeError as exc:
         logger.error(f"File extraction dependency error: {exc}")
-        raise APIError(500, ErrorCode.FILE_IO_ERROR, str(exc))
+        message = str(exc)
+        if "Tesseract OCR" in message or message.startswith("OCR failed"):
+            raise APIError(400, ErrorCode.CHAPTER_EMPTY, message)
+        raise APIError(500, ErrorCode.FILE_IO_ERROR, message)
     except Exception as exc:
         logger.error(f"File extraction failed: {exc}")
         raise APIError(500, ErrorCode.FILE_IO_ERROR, "Failed to extract text from the uploaded file.")
@@ -94,7 +102,15 @@ def upload_chapter(session_id: str, chapter: str, file: UploadFile):
 
     try:
         chunks = chunk_text(text, chapter)
+        if not chunks:
+            raise APIError(
+                400,
+                ErrorCode.CHAPTER_EMPTY,
+                "No semantic content remained after filtering. The PDF may be scanned, image-heavy, or mostly labels.",
+            )
         get_or_create_store(session_id, chunks, content_type=ContentType.question_paper.value)
+    except APIError:
+        raise
     except Exception as exc:
         logger.error(f"Vector store creation failed: {exc}")
         raise APIError(
@@ -103,7 +119,9 @@ def upload_chapter(session_id: str, chapter: str, file: UploadFile):
             "Failed to create vector store from the uploaded chapter. Please try again.",
         )
 
-    logger.info(f"Chapter uploaded: session={session_id}, file={file.filename}, length={len(text)}")
+    logger.info(
+        f"Chapter uploaded: session={session_id}, file={file.filename}, language={language}, length={len(text)}"
+    )
     return UploadResponse()
 
 

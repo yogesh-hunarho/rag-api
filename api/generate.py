@@ -6,7 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException
 
 from schemas.paper_blueprint import PaperBlueprint
-from services.chunking import ContentType, GenerateType, chunk_text
+from services.chunking import ContentType, GenerateType
 from services.vector_store import get_or_create_store
 from services.rag import get_context
 from services.prompts import (

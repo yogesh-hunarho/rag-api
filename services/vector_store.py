@@ -18,9 +18,12 @@ def get_or_create_store(session_id: str, chunks, content_type: str = "default"):
         logger.info(f"Loading existing FAISS store: {path}")
         return FAISS.load_local(path, get_embeddings(), allow_dangerous_deserialization=True)
 
+    if not chunks:
+        raise ValueError("chunks are required to create a new vector store")
+
     logger.info(f"Creating new FAISS store: {path} ({len(chunks)} chunks)")
     docs = [
-        Document(page_content=c["content"], metadata=c["metadata"])
+        Document(page_content=c["content"], metadata={})
         for c in chunks
     ]
 
@@ -29,6 +32,6 @@ def get_or_create_store(session_id: str, chunks, content_type: str = "default"):
 
     chunks_path = f"{path}/chunks.json"
     with open(chunks_path, "w", encoding="utf-8") as f:
-        json.dump(chunks, f)
+        json.dump(chunks, f, ensure_ascii=False, indent=2)
         
     return db

@@ -445,17 +445,33 @@ def clean_text(text: str) -> str:
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
 
-def chunk_text(text: str, chapter: str):
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=150,
-        separators=["\n## ", "\n### ", "\n\n", "\n", ". "],
-    )
-    chunks = splitter.split_text(text)
-    return [
-        {"content": c, "metadata": {"chapter": chapter, "has_math": "$" in c or "\\(" in c}}
-        for c in chunks
-    ]
+def split_into_sentences(text):
+    sentences = re.split(r'(?<=[.!?])\\s+', text)
+    return [s.strip() for s in sentences if s.strip()]
+
+def create_chunks_with_overlap(text, max_words=120, overlap_sentences=2):
+    sentences = split_into_sentences(text)
+    chunks = []
+    current_chunk = []
+    current_word_count = 0
+
+    for sentence in sentences:
+        words = sentence.split()
+        word_count = len(words)
+
+        if current_word_count + word_count > max_words:
+            chunks.append(\" \".join(current_chunk))
+            overlap = current_chunk[-overlap_sentences:] if overlap_sentences > 0 else []
+            current_chunk = overlap + [sentence]
+            current_word_count = sum(len(s.split()) for s in current_chunk)
+        else:
+            current_chunk.append(sentence)
+            current_word_count += word_count
+
+    if current_chunk:
+        chunks.append(\" \".join(current_chunk))
+
+    return chunks
 
 <!-- file_parser.py -->
 import docx
