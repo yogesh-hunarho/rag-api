@@ -629,6 +629,7 @@ STRICT RULES:
 - No opinions, interpretations, or commentary
 - No numbering or bullet symbols inside sentences
 - JSON output ONLY
+- MULTILINGUAL SUPPORT: If the Chapter Text is in Devanagari (Hindi/Marathi), generate the answer in Devanagari (Hindi/Marathi) while maintaining the structural JSON format.
 
 QUALITY RULES:
 - Each item in "summary" must be exactly one complete sentence
@@ -654,6 +655,7 @@ STRICT RULES:
 - Keep NCERT textbook tone (clear, factual, neutral)
 - Paraphrase only to simplify sentence structure
 - JSON output ONLY
+- MULTILINGUAL SUPPORT: If the Chapter Text is in Devanagari (Hindi/Marathi), generate the answer in Devanagari (Hindi/Marathi) while maintaining the structural JSON format.
 
 NOTES STRUCTURE:
 - "title" should reflect the chapter/topic in the text
@@ -687,6 +689,7 @@ CONTENT RULES (STRICT):
 - Do NOT add external concepts, relations, or examples
 - Do NOT explain or summarize
 - Extract hierarchy only
+- MULTILINGUAL SUPPORT: If the Chapter Text is in Devanagari (Hindi/Marathi), generate the mindmap labels in Devanagari (Hindi/Marathi).
 
 STRUCTURE RULES:
 - Root = chapter/topic
@@ -728,8 +731,9 @@ STRICT RULES:
 - Follow chapter concept order as it appears in the text
 - Language must be clear, instructional, and teacher-friendly
 - JSON output ONLY
+- MULTILINGUAL SUPPORT: If the Chapter Text is in Devanagari (Hindi/Marathi), generate the answer in Devanagari (Hindi/Marathi) while maintaining the structural JSON format.
 
-LESSON PLAN REQUIREMENTS:
+LESSSON PLAN REQUIREMENTS:
 - learning_objectives: specific student learning outcomes from chapter content
 - teaching_steps: logical concept flow in chapter order
 - assessment: short oral/written checks answerable from chapter text
@@ -759,6 +763,7 @@ STRICT RULES:
 - Do NOT refer to figure numbers (Fig., Figure 1.1, etc.)
 - Questions must be answerable without seeing any image
 - JSON output ONLY
+- MULTILINGUAL SUPPORT: If the Chapter Text is in Devanagari (Hindi/Marathi), generate the questions and answers in Devanagari (Hindi/Marathi) while maintaining the structural JSON format.
 
 QUESTION COVERAGE RULE:
 - Cover all major concepts from the chapter
@@ -801,6 +806,7 @@ ABSOLUTE RULES:
 - Match required question counts EXACTLY
 - JSON output ONLY
 - No extra keys, no comments, no markdown
+- MULTILINGUAL SUPPORT: If the Chapter Text is in Devanagari (Hindi/Marathi), generate the questions and answers in Devanagari (Hindi/Marathi) while maintaining the structural JSON format.
 
 MATH / FORMULA RULES:
 - Use KaTeX-compatible LaTeX for mathematical expressions
@@ -908,6 +914,7 @@ STRICT RULES:
 - Use ONLY chapter-supported information
 - Keep wording concise and factual
 - JSON output ONLY
+- MULTILINGUAL SUPPORT: If the Chapter Text is in Devanagari (Hindi/Marathi), generate the answers in Devanagari (Hindi/Marathi) while maintaining the structural JSON format.
 
 OUTPUT JSON FORMAT (STRICT):
 {{
@@ -962,6 +969,7 @@ JSON OUTPUT RULES:
 
 FAILSAFE:
 - If sufficient support is missing in Chapter Text, return empty JSON structure for that task.
+- MULTILINGUAL SUPPORT: If the Chapter Text is in Devanagari (Hindi/Marathi), generate the output in Devanagari (Hindi/Marathi) while maintaining the structural JSON format. Render Unicode characters as actual characters, not escape sequences.
 """
 
 MCQ_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
