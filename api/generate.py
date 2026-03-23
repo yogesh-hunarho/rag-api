@@ -369,43 +369,97 @@ def _normalize_question_paper_csv_payload(payload: Any) -> List[Dict[str, Any]]:
     return validated_rows
 
 
+def _normalize_case_sub_question_counts(case_cfg: Any) -> Dict[str, int]:
+    """
+    Read optional nested case sub-question blueprint:
+    case_base_question: {
+      count: <case_sets>,
+      question: { mcq: {count: 1}, short_question: {count: 1}, ... }
+    }
+    """
+    raw_question_cfg = getattr(case_cfg, "question", {})
+    if not isinstance(raw_question_cfg, dict):
+        return {}
+
+    supported_subtypes = {"mcq", "fill_in_the_blank", "short_question", "long_question"}
+    normalized: Dict[str, int] = {}
+    for raw_key, raw_cfg in raw_question_cfg.items():
+        subtype = _to_question_type(raw_key, str(raw_key).strip().lower())
+        if subtype not in supported_subtypes:
+            continue
+        raw_count = getattr(raw_cfg, "count", 0)
+        normalized[subtype] = max(_safe_int(raw_count, 0), 0)
+
+    return normalized
+
+
 def _apply_question_paper_blueprint_rules(rows: List[Dict[str, Any]], blueprint: PaperBlueprint) -> List[Dict[str, Any]]:
     """
     Enforce blueprint counts on normalized CSV rows.
+
     Case-based policy:
     - If case_base_question count <= 0 or missing -> remove case-based rows.
-    - If case_base_question count > 0 -> keep up to requested count.
-      If none are generated, do not hallucinate a case row.
+    - If case_base_question.question is provided, treat case count as number of case sets,
+      and enforce subtype totals as: subtype_total = case_count * subtype.count.
     """
     supported = {"mcq", "fill_in_the_blank", "short_question", "long_question", "case_base_question"}
     requested_counts: Dict[str, int] = {}
+    case_sub_requested: Dict[str, int] = {}
 
     for raw_key, cfg in blueprint.marks.items():
-        qtype = QUESTION_TYPE_ALIASES.get(str(raw_key).strip().lower(), str(raw_key).strip().lower())
-        if qtype in supported:
-            requested_counts[qtype] = max(int(cfg.count), 0)
+        qtype = _to_question_type(raw_key, str(raw_key).strip().lower())
+        if qtype not in supported:
+            continue
+
+        top_level_count = max(_safe_int(getattr(cfg, "count", 0), 0), 0)
+        if qtype != "case_base_question":
+            requested_counts[qtype] = top_level_count
+            continue
+
+        case_sub_per_set = _normalize_case_sub_question_counts(cfg)
+        if case_sub_per_set:
+            case_sub_requested = {subtype: top_level_count * count for subtype, count in case_sub_per_set.items()}
+            requested_counts[qtype] = sum(case_sub_requested.values())
+        else:
+            case_sub_requested = {}
+            requested_counts[qtype] = top_level_count
 
     used_counts = {k: 0 for k in supported}
+    used_case_sub_counts = {k: 0 for k in case_sub_requested}
     output: List[Dict[str, Any]] = []
 
     for row in rows:
         if not isinstance(row, dict):
             continue
+
         qtype = _to_question_type(_pick(row, ["Question Type", "question_type", "type"]), "")
         if qtype not in supported:
             continue
 
-        # If qtype isn't requested in blueprint, skip it.
         if qtype not in requested_counts:
             continue
 
-        # Enforce count ceiling per type.
         limit = requested_counts[qtype]
         if used_counts[qtype] >= limit:
             continue
 
+        selected_case_sub_qtype = ""
+        if qtype == "case_base_question" and case_sub_requested:
+            selected_case_sub_qtype = _to_question_type(
+                _pick(row, ["sub question type", "sub_question_type"]),
+                "",
+            )
+            sub_limit = case_sub_requested.get(selected_case_sub_qtype)
+            if sub_limit is None:
+                continue
+            if used_case_sub_counts[selected_case_sub_qtype] >= sub_limit:
+                continue
+
         output.append(row)
         used_counts[qtype] += 1
+
+        if qtype == "case_base_question" and case_sub_requested:
+            used_case_sub_counts[selected_case_sub_qtype] += 1
 
     case_requested = requested_counts.get("case_base_question", 0)
     case_generated = used_counts.get("case_base_question", 0)
@@ -415,7 +469,90 @@ def _apply_question_paper_blueprint_rules(rows: List[Dict[str, Any]], blueprint:
             case_requested,
         )
 
+    for subtype, required in case_sub_requested.items():
+        generated = used_case_sub_counts.get(subtype, 0)
+        if required > 0 and generated < required:
+            logger.warning(
+                "Blueprint requested case_base_question subtype %s=%s but generated only %s.",
+                subtype,
+                required,
+                generated,
+            )
+
     return output
+
+
+def _requested_case_subtype_totals(blueprint: PaperBlueprint) -> Dict[str, int]:
+    totals: Dict[str, int] = {}
+    for raw_key, cfg in blueprint.marks.items():
+        qtype = _to_question_type(raw_key, str(raw_key).strip().lower())
+        if qtype != "case_base_question":
+            continue
+
+        case_count = max(_safe_int(getattr(cfg, "count", 0), 0), 0)
+        if case_count <= 0:
+            continue
+
+        per_set = _normalize_case_sub_question_counts(cfg)
+        if not per_set:
+            # No subtype split provided; treat as generic case rows.
+            totals["short_question"] = totals.get("short_question", 0) + case_count
+            continue
+
+        for subtype, count in per_set.items():
+            totals[subtype] = totals.get(subtype, 0) + (case_count * count)
+
+    return totals
+
+
+def _generated_case_subtype_totals(rows: List[Dict[str, Any]]) -> Dict[str, int]:
+    counts: Dict[str, int] = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        qtype = _to_question_type(_pick(row, ["Question Type", "question_type", "type"]), "")
+        if qtype != "case_base_question":
+            continue
+        subtype = _to_question_type(
+            _pick(row, ["sub question type", "sub_question_type"]),
+            "",
+        )
+        if not subtype:
+            continue
+        counts[subtype] = counts.get(subtype, 0) + 1
+    return counts
+
+
+def _case_subtype_shortfall(rows: List[Dict[str, Any]], blueprint: PaperBlueprint) -> Dict[str, int]:
+    requested = _requested_case_subtype_totals(blueprint)
+    if not requested:
+        return {}
+
+    generated = _generated_case_subtype_totals(rows)
+    missing: Dict[str, int] = {}
+    for subtype, required in requested.items():
+        gap = required - generated.get(subtype, 0)
+        if gap > 0:
+            missing[subtype] = gap
+    return missing
+
+
+def _build_case_backfill_prompt(context: str, missing_case_subtypes: Dict[str, int]) -> str:
+    missing_json = json.dumps(missing_case_subtypes, ensure_ascii=False, indent=2)
+    missing_total = sum(missing_case_subtypes.values())
+    return (
+        CASE_BASE_ONLY_PROMPT.format(context=context)
+        + "\n\n"
+        + "EXTRA BACKFILL INSTRUCTIONS (STRICT):\n"
+        + "- This is a second-pass backfill for missing case-based rows.\n"
+        + f"- Generate EXACTLY {missing_total} case-based rows.\n"
+        + '- Every row must have "Question Type": "case_base_question".\n'
+        + "- Generate ONLY these missing subtype counts exactly:\n"
+        + f"{missing_json}\n"
+        + "- Use different chapter sections/subtopics to maximize coverage.\n"
+        + "- Do not repeat the same case passage verbatim across all rows.\n"
+        + "- Return JSON array only. If impossible, return [].\n"
+    )
 
 
 CSV_COLUMNS = [
@@ -487,6 +624,11 @@ QUESTION_TYPE_ALIASES = {
     "case_base_questions": "case_base_question",
     "case-based / competency-based questions": "case_base_question",
     "case based / competency based questions": "case_base_question",
+    "competency_based": "case_base_question",
+    "competency_based_question": "case_base_question",
+    "competency_based_questions": "case_base_question",
+    "competency based question": "case_base_question",
+    "competency based questions": "case_base_question",
     "true false": "true_false",
     "true_false": "true_false",
     "truefalse": "true_false",
@@ -509,6 +651,8 @@ QUESTION_TYPE_LABELS = {
     "numerical_problems": "Numerical Problems",
     "match_the_column": "Match the column",
 }
+
+VALID_DIFFICULTIES = {"easy", "medium", "hard"}
 
 EXPORT_CSV_HEADERS = [
     "Board",
@@ -539,6 +683,41 @@ def _clean_str(value: Any) -> str | None:
         return None
     text = str(value).strip()
     return text if text else None
+
+
+def _normalize_difficulty_level(value: Any, fallback: str = "easy") -> str:
+    fallback_clean = fallback if fallback in VALID_DIFFICULTIES else "easy"
+    if value is None:
+        return fallback_clean
+
+    text = str(value).strip().lower()
+    if not text:
+        return fallback_clean
+    if text in VALID_DIFFICULTIES:
+        return text
+    if "hard" in text or "difficult" in text:
+        return "hard"
+    if "medium" in text or "moderate" in text:
+        return "medium"
+    if "easy" in text or "simple" in text:
+        return "easy"
+    return fallback_clean
+
+
+def _sanitize_row_difficulty(row: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(row, dict):
+        return row
+
+    qtype = _to_question_type(_pick(row, ["Question Type", "question_type", "type"]), "")
+    sub_qtype = _to_question_type(_pick(row, ["sub question type", "sub_question_type"]), "")
+    effective_qtype = sub_qtype if qtype == "case_base_question" and sub_qtype else qtype
+    fallback = "medium" if effective_qtype == "long_question" else "easy"
+
+    row["Difficulty Level"] = _normalize_difficulty_level(
+        _pick(row, ["Difficulty Level", "difficulty_level", "difficulty"]),
+        fallback=fallback,
+    )
+    return row
 
 
 def _canon_key(key: Any) -> str:
@@ -803,7 +982,11 @@ def _build_csv_row(item: Dict[str, Any], default_question_type: str) -> Dict[str
 
     row["Topics Name"] = _clean_str(_pick(item, ["Topics Name", "topic_name", "topic", "Topic Name"]))
     row["Subtopic Name"] = _clean_str(_pick(item, ["Subtopic Name", "subtopic_name", "subtopic", "Subtopic Name"]))
-    row["Difficulty Level"] = _clean_str(_pick(item, ["Difficulty Level", "difficulty_level", "difficulty"]))
+    fallback = "medium" if question_type in {"long_question", "case_base_question"} else "easy"
+    row["Difficulty Level"] = _normalize_difficulty_level(
+        _pick(item, ["Difficulty Level", "difficulty_level", "difficulty"]),
+        fallback=fallback,
+    )
     row["Question"] = _clean_str(_pick(item, ["Question", "question", "context", "case_context"]))
     row["sub question type"] = _clean_str(_pick(item, ["sub question type", "sub_question_type"]))
     row["sub question"] = _clean_str(_pick(item, ["sub question", "sub_question"]))
@@ -831,6 +1014,7 @@ def _build_csv_row(item: Dict[str, Any], default_question_type: str) -> Dict[str
         row["Option D"] = None
         row["Correct Option"] = None
 
+    row = _sanitize_row_difficulty(row)
     return _enforce_explanation_rule(row)
 
 
@@ -1070,7 +1254,6 @@ def generate_question_paper(session_id: str, blueprint: PaperBlueprint):
     """Generate a structured question paper based on the blueprint."""
     context, base = _run_rag_pipeline(session_id, ContentType.question_paper, k=20)
 
-    llm = get_llm(temperature=0.3, top_p=0.9, max_tokens=12000)
     prompt = QUESTION_PAPER_PROMPT.format(
         class_=blueprint.class_,
         subject=blueprint.subject,
@@ -1080,6 +1263,7 @@ def generate_question_paper(session_id: str, blueprint: PaperBlueprint):
         ),
         context=context,
     )
+    llm = get_llm(temperature=0.3, top_p=0.9, max_tokens=12000, prompt=prompt)
 
     response = invoke_llm(llm, prompt)
 
@@ -1096,6 +1280,53 @@ def generate_question_paper(session_id: str, blueprint: PaperBlueprint):
 
     paper = _normalize_question_paper_csv_payload(paper)
     paper = _apply_question_paper_blueprint_rules(paper, blueprint)
+
+    # Backfill missing case-based subtype rows (common LLM under-generation path).
+    case_context = None
+    for attempt in range(1, 3):
+        missing_case = _case_subtype_shortfall(paper, blueprint)
+        if not missing_case:
+            break
+
+        logger.warning(
+            "Case-based blueprint shortfall detected (attempt=%d): %s",
+            attempt,
+            missing_case,
+        )
+
+        try:
+            if case_context is None:
+                case_context, _ = _run_rag_pipeline(session_id, GenerateType.only_case_base, k=12)
+
+            backfill_prompt = _build_case_backfill_prompt(case_context, missing_case)
+            backfill_llm = get_llm(
+                temperature=0.2,
+                top_p=0.85,
+                max_tokens=9000,
+                prompt=backfill_prompt,
+            )
+            backfill_response = invoke_llm(backfill_llm, backfill_prompt)
+
+            try:
+                backfill_payload = json.loads(backfill_response.content)
+            except json.JSONDecodeError:
+                repaired = repair_json(backfill_response.content)
+                backfill_payload = json.loads(repaired)
+
+            backfill_rows = _normalize_csv_question_payload(GenerateType.only_case_base, backfill_payload)
+            if not backfill_rows:
+                logger.warning("Case backfill attempt=%d produced no rows.", attempt)
+                continue
+
+            # Append and re-apply hard blueprint limits.
+            paper.extend(backfill_rows)
+            paper = _apply_question_paper_blueprint_rules(paper, blueprint)
+        except Exception as exc:
+            logger.warning("Case backfill attempt=%d failed: %s", attempt, str(exc)[:200])
+            continue
+
+    paper = [_sanitize_row_difficulty(dict(row)) for row in paper if isinstance(row, dict)]
+
     try:
         # Validate every row and force alias-based output keys exactly as CSV headers.
         paper = [CSVQuestionRow.model_validate(row).model_dump(by_alias=True) for row in paper]
@@ -1196,10 +1427,11 @@ def export_question_paper_xlsx(payload: Dict[str, Any]):
 @router.post("/lesson/mindmap", response_class=PlainTextResponse)
 def generate_mindmap(session_id: str):
     """Generate a Mermaid mindmap from the chapter text."""
-    context, base = _run_rag_pipeline(session_id, ContentType.question_paper, k=10)
+    # Use mindmap-specific retrieval query + coverage profile.
+    context, base = _run_rag_pipeline(session_id, "mindmap", k=10)
 
-    llm = get_llm_for_mindmap()
     prompt = MINDMAP_PROMPT.format(context=context)
+    llm = get_llm_for_mindmap(prompt=prompt)
 
     response = invoke_llm(llm, prompt)
 
@@ -1225,13 +1457,13 @@ def generate_question_type(question_type: GenerateType, session_id: str):
     context, base = _run_rag_pipeline(session_id, question_type, k=k)
 
     config = LLM_CONFIG_MAP[question_type]
+    prompt = GENERATE_TYPE_PROMPT_MAP[question_type].format(context=context)
     llm = get_llm(
         temperature=config["temperature"],
         top_p=config["top_p"],
         max_tokens=config["max_tokens"],
+        prompt=prompt,
     )
-
-    prompt = GENERATE_TYPE_PROMPT_MAP[question_type].format(context=context)
     response = invoke_llm(llm, prompt)
 
     try:

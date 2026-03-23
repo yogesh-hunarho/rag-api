@@ -303,12 +303,25 @@ BLUEPRINT INTERPRETATION RULES:
 - "fill_in_the_blanks" -> rows with "Question Type": "fill_in_the_blank"
 - "short_question" -> rows with "Question Type": "short_question"
 - "long_question" -> rows with "Question Type": "long_question"
-- "case_base_question" -> rows with "Question Type": "case_base_question"
+- "case_base_question" / "case_base" / "competency_based_questions" -> rows with "Question Type": "case_base_question"
 - For case-based rows, "marks_each" applies per case sub-question row.
+- Optional nested case subtype blueprint may be provided:
+  "case_base_question": {{
+    "count": 2,
+    "question": {{
+      "mcq": {{"count": 1}},
+      "fill_in_the_blank": {{"count": 1}},
+      "short_question": {{"count": 1}},
+      "long_question": {{"count": 1}}
+    }}
+  }}
+- If nested "question" exists: treat case "count" as number of case sets.
+  For each case set, generate exactly the requested subtype counts.
+  Total case rows = case_count * (sum of subtype counts per case set).
 
 CASE-BASE POLICY (IMPORTANT):
 - If blueprint includes "case_base_question" with count > 0:
-  try to generate at least 1 valid case-based row.
+  generate valid case-based rows matching the requested totals.
 - If chapter context does not support a valid case-based row, return 0 case-based rows (remove case rows), do NOT hallucinate.
 - If blueprint does not include "case_base_question", do NOT generate any case-based rows.
 

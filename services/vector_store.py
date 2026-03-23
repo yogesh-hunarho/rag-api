@@ -7,6 +7,22 @@ import json
 
 logger = logging.getLogger(__name__)
 
+
+def _to_doc_metadata(chunk: dict, position: int, total_chunks: int) -> dict:
+    metadata = {
+        "id": chunk.get("id"),
+        "position": position,
+        "total_chunks": total_chunks,
+    }
+
+    # Keep only primitive values to avoid FAISS serialization issues.
+    clean = {}
+    for key, value in metadata.items():
+        if isinstance(value, (str, int, float, bool)) and value is not None:
+            clean[key] = value
+    return clean
+
+
 def get_or_create_store(session_id: str, chunks, content_type: str = "default"):
     """
     Get or create a FAISS vector store for a session + content type.
@@ -22,9 +38,13 @@ def get_or_create_store(session_id: str, chunks, content_type: str = "default"):
         raise ValueError("chunks are required to create a new vector store")
 
     logger.info(f"Creating new FAISS store: {path} ({len(chunks)} chunks)")
+    total_chunks = len(chunks)
     docs = [
-        Document(page_content=c["content"], metadata={})
-        for c in chunks
+        Document(
+            page_content=c["content"],
+            metadata=_to_doc_metadata(c, idx + 1, total_chunks),
+        )
+        for idx, c in enumerate(chunks)
     ]
 
     db = FAISS.from_documents(docs, get_embeddings())

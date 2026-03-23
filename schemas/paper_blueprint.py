@@ -1,9 +1,16 @@
-from pydantic import BaseModel, Field, ConfigDict, AliasChoices
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 from typing import Dict, Literal
+
+
+class CaseSubQuestionConfig(BaseModel):
+    count: int = Field(..., ge=0)
 
 class MarksConfig(BaseModel):
     count: int = Field(..., ge=0)
     marks_each: int = Field(default=1, ge=1)
+    question: Dict[str, CaseSubQuestionConfig] = Field(default_factory=dict)
+
+    model_config = ConfigDict(extra="ignore")
 
 class PaperBlueprint(BaseModel):
     class_: int = Field(
