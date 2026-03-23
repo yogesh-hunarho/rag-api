@@ -1,260 +1,512 @@
-{
-  "mcq": [
-    {
-      "question": "In scientific notation or scientific form, how are numbers written?",
-      "options": [
-        "x + 10y",
-        "x - 10y",
-        "x × 10y",
-        "x ÷ 10y"
-      ],
-      "correct_index": 2,
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "What is the coefficient in scientific notation x × 10y?",
-      "options": [
-        "x ≥ 1 and x < 10",
-        "x < 1",
-        "x > 10",
-        "x = 10"
-      ],
-      "correct_index": 0,
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "What is the exponent in scientific notation x × 10y?",
-      "options": [
-        "a positive integer",
-        "a negative integer",
-        "any integer",
-        "a fraction"
-      ],
-      "correct_index": 2,
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "What is the approximate time for light to reach the Earth from the Sun?",
-      "options": [
-        "about 5 minutes",
-        "about 8 minutes",
-        "about 10 minutes",
-        "about 15 minutes"
-      ],
-      "correct_index": 1,
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "What is 105 seconds approximately equal to?",
-      "options": [
-        "1.16 hours",
-        "1.16 minutes",
-        "1.16 days",
-        "1.16 weeks"
-      ],
-      "correct_index": 2,
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "What is 106 seconds approximately equal to?",
-      "options": [
-        "11.57 hours",
-        "11.57 minutes",
-        "11.57 days",
-        "11.57 weeks"
-      ],
-      "correct_index": 2,
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "What is the value of x0 where x ≠ 0?",
-      "options": [
-        "0",
-        "1",
-        "x",
-        "undefined"
-      ],
-      "correct_index": 1,
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "How is n × n read?",
-      "options": [
-        "n cubed",
-        "n to the power 1",
-        "n raised to the power 3",
-        "n squared or n raised to the power 2"
-      ],
-      "correct_index": 3,
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "How are square numbers expressed?",
-      "options": [
-        "n3",
-        "n2",
-        "n4",
-        "n1"
-      ],
-      "correct_index": 1,
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "How are cube numbers expressed?",
-      "options": [
-        "n2",
-        "n4",
-        "n3",
-        "n1"
-      ],
-      "correct_index": 2,
-      "marks": 1,
-      "difficulty": "easy"
-    }
-  ],
-  "fill_in_the_blanks": [
-    {
-      "question": "Any number can be written as the product of a number between 1 and 10 and a ______ of 10.",
-      "answer": "power",
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "In scientific notation or scientific form, the exponent y is ______ integer.",
-      "answer": "any",
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "The distance around the Earth is considered as ______ km.",
-      "answer": "40,000",
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "Time needed to make a cup of tea is 5 – 10 minutes, which is approximately ______ seconds.",
-      "answer": "4 × 102 – 8 × 102",
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "For any letter number a, 20 = 2a – a = 2a ÷ 2a = ______.",
-      "answer": "1",
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "When a line of length 24 units is halved 5 times, we get 24 ÷ 25 = \\( \\frac{1}{2} \\) units.",
-      "answer": "1/2",
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "Similarly, 10–3 = \\( \\frac{1}{10^3} \\).",
-      "answer": "1/103",
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "The initial thickness of the paper was ______ cm.",
-      "answer": "0.001",
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "Upon folding once, its thickness became 0.001 cm × 2 = ______ cm.",
-      "answer": "0.002",
-      "marks": 1,
-      "difficulty": "easy"
-    },
-    {
-      "question": "The Sun is located ______ m from the centre of our Milky Way galaxy.",
-      "answer": "30,00,00,00,00,00,00,00,00,000",
-      "marks": 1,
-      "difficulty": "easy"
-    }
-  ],
-  "short_question": [
-    {
-      "question": "Define scientific notation or scientific form.",
-      "answer": "In scientific notation or scientific form (also called standard form), we write numbers as x × 10 y, where x ≥ 1 and x < 10 is the coefficient and y, the exponent, is any integer.",
-      "figure_reference": null,
-      "marks": 3,
-      "difficulty": "easy"
-    },
-    {
-      "question": "Explain why the exponent y is often more important than the coefficient x in scientific notation.",
-      "answer": "Often, the exponent y is more important than the coefficient x. Indeed, if the 2 is changed to 3, the population increases by one-half, i.e., 2 crore to 3 crore, whereas if the 7 is changed to 8, the change in population is 10 times, i.e., 2 crores to 20 crores.",
-      "figure_reference": null,
-      "marks": 3,
-      "difficulty": "hard"
-    },
-    {
-      "question": "What is the general rule for \\( x^0 \\) where \\( x \\neq 0 \\)?",
-      "answer": "In general, \\( x^a \\div x^a = x^{a-a} = x^0 \\), and so \\( 1 = x^0 \\), where x ≠ 0 and a is a counting number.",
-      "figure_reference": null,
-      "marks": 3,
-      "difficulty": "easy"
-    },
-    {
-      "question": "Explain how the thickness of a paper changes when folded multiple times, starting with an initial thickness of 0.001 cm.",
-      "answer": "Upon folding once, its thickness became 0.001 cm × 2 = 0.002 cm. Folding it twice, its thickness became — 0.001 cm × 2 × 2 = 0.004 cm, or 0.001 cm × 22 = 0.004 cm (in shorthand). Upon folding it thrice, its thickness became — 0.001 cm × 2 × 2 × 2, or 0.001 cm × 23 = 0.008 cm.",
-      "figure_reference": null,
-      "marks": 3,
-      "difficulty": "medium"
-    },
-    {
-      "question": "Write the expanded form of 47561 using powers of 10.",
-      "answer": "(4 × 104) + (7 × 103) + (5 × 102) + (6 × 101) + (1 × 100).",
-      "figure_reference": null,
-      "marks": 3,
-      "difficulty": "easy"
-    }
-  ],
-  "long_question": [
-    {
-      "question": "Explain how \\( 4^6 \\) can be evaluated in two different ways using exponential forms.",
-      "answer": "46 can be evaluated in these two ways, (4 × 4 × 4) × (4 × 4 × 4) = 43 × 43 = 64 × 64 = 4096. 43 × 43 is the square of 43, i.e., 43 × 43 can also be written as (43)2. (4 × 4) × (4 × 4) × (4 × 4) = 42 × 42 × 42 = 16 × 16 × 16 = 4096. 42 × 42 × 42 is the cube of 42, i.e., 42 × 42 × 42 can also be written as (42)3.",
-      "figure_reference": null,
-      "marks": 5,
-      "difficulty": "hard"
-    },
-    {
-      "question": "Write the number 561.903 in expanded form using powers of 10.",
-      "answer": "561.903 = (5 × 100) + (6 × 10) + 1 + (9 × \\( \\frac{1}{10} \\)) + (0 × \\( \\frac{1}{100} \\)) + (3 × \\( \\frac{1}{1000} \\)). Writing it using powers of 10, we have 561.903 = (5 × 102) + (6 × 101) + (1 × 100) + (9 × 10–1) + (0 × 10–2) + (3 × 10–3).",
-      "figure_reference": null,
-      "marks": 5,
-      "difficulty": "medium"
-    },
-    {
-      "question": "What is the general rule for \\( (n^a)^b \\)? Provide an example from the text.",
-      "answer": "In general, \\( (n^a)^b = (n^b) \\). For example, 210 = (2 × 2 × 2 × 2 × 2) × (2 × 2 × 2 × 2 × 2) = (25) × (25) = (25)2.",
-      "figure_reference": null,
-      "marks": 5,
-      "difficulty": "medium"
-    },
-    {
-      "question": "Explain the concept of negative exponents using the example of halving a line of length 24 units.",
-      "answer": "When a line of length 24 units is halved 5 times, 24 ÷ 25 = \\( \\frac{1}{2} \\) units. Using the generalised form, we get 24 ÷ 25= 2(4 – 5) = 2– 1. So, 2– 1 = \\( \\frac{1}{2} \\). When a line of length 24 units is halved 10 times, we get 24 ÷ 210= 2(4 – 10) = 2– 6 units. When expanded, 24 ÷ 210 = \\( \\frac{1}{2^6} \\) = \\( \\frac{1}{64} \\), which is also written as 2– 6.",
-      "figure_reference": null,
-      "marks": 5,
-      "difficulty": "hard"
-    },
-    {
-      "question": "Write the large number facts about the Sun and stars in our galaxy.",
-      "answer": "(i) The Sun is located 30,00,00,00,00,00,00,00,00,000 m from the centre of our Milky Way galaxy. (ii) The number of stars in our galaxy is 1,00,00,00,00,000.",
-      "figure_reference": null,
-      "marks": 5,
-      "difficulty": "easy"
-    }
-  ]
-}
+[
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Interconversion of States of Matter",
+    "Question Type": "mcq",
+    "Difficulty Level": "easy",
+    "Question": "What is the change of solid state directly to gaseous state without going through liquid state called?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "Evaporation",
+    "Option B": "Boiling",
+    "Option C": "Sublimation",
+    "Option D": "Deposition",
+    "Correct Option": "C",
+    "Answer": "Sublimation",
+    "Explanation": "Sublimation is the change of solid state directly to gaseous state without going through liquid state."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Evaporation",
+    "Question Type": "mcq",
+    "Difficulty Level": "easy",
+    "Question": "Which phenomenon is described as particles from the surface gaining enough energy to overcome forces of attraction and change into vapour state?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "Boiling",
+    "Option B": "Sublimation",
+    "Option C": "Deposition",
+    "Option D": "Evaporation",
+    "Correct Option": "D",
+    "Answer": "Evaporation",
+    "Explanation": "Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Temperature Units",
+    "Question Type": "mcq",
+    "Difficulty Level": "easy",
+    "Question": "What is the SI unit of temperature mentioned in the text?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "Celsius",
+    "Option B": "Fahrenheit",
+    "Option C": "Kelvin",
+    "Option D": "Joule",
+    "Correct Option": "C",
+    "Answer": "Kelvin",
+    "Explanation": "Kelvin is the SI unit of temperature."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Latent Heat of Vaporisation",
+    "Question Type": "mcq",
+    "Difficulty Level": "medium",
+    "Question": "Particles in steam at 373 K have more energy than water at the same temperature because they have absorbed extra energy in the form of:",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "Kinetic energy",
+    "Option B": "Latent heat of fusion",
+    "Option C": "Latent heat of vaporisation",
+    "Option D": "Atmospheric pressure",
+    "Correct Option": "C",
+    "Answer": "Latent heat of vaporisation",
+    "Explanation": "Particles in steam, that is, water vapour at 373 K (100oC) have more energy than water at the same temperature. This is because particles in steam have absorbed extra energy in the form of latent heat of vaporisation."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Melting Point",
+    "Question Type": "mcq",
+    "Difficulty Level": "easy",
+    "Question": "What is the minimum temperature at which a solid melts to become a liquid at the atmospheric pressure called?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "Boiling point",
+    "Option B": "Freezing point",
+    "Option C": "Melting point",
+    "Option D": "Sublimation point",
+    "Correct Option": "C",
+    "Answer": "Melting point",
+    "Explanation": "The minimum temperature at which a solid melts to become a liquid at the atmospheric pressure is called its melting point."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Solid Carbon Dioxide",
+    "Question Type": "mcq",
+    "Difficulty Level": "easy",
+    "Question": "What is solid carbon dioxide also known as?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "Wet ice",
+    "Option B": "Dry ice",
+    "Option C": "Carbon gas",
+    "Option D": "Liquid carbon dioxide",
+    "Correct Option": "B",
+    "Answer": "Dry ice",
+    "Explanation": "Solid carbon dioxide is also known as dry ice."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "States of Matter",
+    "Question Type": "mcq",
+    "Difficulty Level": "medium",
+    "Question": "Which state of matter is described as having particles that just move about randomly with no order?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "Solids",
+    "Option B": "Liquids",
+    "Option C": "Gases",
+    "Option D": "Plasma",
+    "Correct Option": "C",
+    "Answer": "Gases",
+    "Explanation": "For gases, there is no order, particles just move about randomly."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Early Classification of Matter",
+    "Question Type": "mcq",
+    "Difficulty Level": "easy",
+    "Question": "According to early Indian philosophers, what were the five basic elements (Panch Tatva) that made up everything?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "Air, water, soil, sun, moon",
+    "Option B": "Air, earth, fire, sky, water",
+    "Option C": "Water, fire, metal, wood, earth",
+    "Option D": "Earth, air, water, space, light",
+    "Correct Option": "B",
+    "Answer": "Air, earth, fire, sky and water",
+    "Explanation": "Early Indian philosophers classified matter in the form of five basic elements — the “Panch Tatva” — air, earth, fire, sky and water."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Evaporation",
+    "Question Type": "mcq",
+    "Difficulty Level": "medium",
+    "Question": "The rate of evaporation depends upon which of the following factors?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "Only temperature and pressure",
+    "Option B": "Surface area, temperature, humidity, and wind speed",
+    "Option C": "Only humidity and wind speed",
+    "Option D": "Volume of the liquid",
+    "Correct Option": "B",
+    "Answer": "Surface area, temperature, humidity, and wind speed",
+    "Explanation": "The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Density of Liquids and Solids",
+    "Question Type": "mcq",
+    "Difficulty Level": "hard",
+    "Question": "Why do liquids generally have lower density compared to solids, as stated in the text?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "Liquid particles are heavier",
+    "Option B": "Liquid particles are more ordered",
+    "Option C": "Liquid particles move freely and have greater space between them",
+    "Option D": "Solids have higher kinetic energy",
+    "Correct Option": "C",
+    "Answer": "In the liquid state, particles move freely and have greater space between each other as compared to particles in the solid state.",
+    "Explanation": "Liquids generally have lower density as compared to solids. This is due to the fact that in the liquid state, particles move freely and have greater space between each other as compared to particles in the solid state."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "States of Matter",
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "easy",
+    "Question": "The arrangement of particles is most ordered in the case of __________.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "solids",
+    "Explanation": "The arrangement of particles is most ordered in the case of solids."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Interconversion of States of Matter",
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "easy",
+    "Question": "The state of matter can be changed by changing temperature or __________.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "pressure",
+    "Explanation": "The state of matter can be changed by changing temperature or pressure."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Deposition",
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "easy",
+    "Question": "__________ is the change of gaseous state directly to solid state without going through liquid state.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "Deposition",
+    "Explanation": "Deposition is the change of gaseous state directly to solid state without going through liquid state."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Boiling",
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "easy",
+    "Question": "Boiling is a __________ phenomenon.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "bulk",
+    "Explanation": "Boiling is a bulk phenomenon."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Evaporation",
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "easy",
+    "Question": "Evaporation causes __________.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "cooling",
+    "Explanation": "Evaporation causes cooling."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Latent Heat of Fusion",
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "medium",
+    "Question": "The amount of heat energy that is required to change 1 kg of a solid into liquid at atmospheric pressure at its melting point is known as the __________.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "latent heat of fusion",
+    "Explanation": "The amount of heat energy that is required to change 1 kg of a solid into liquid at atmospheric pressure at its melting point is known as the latent heat of fusion."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Latent Heat",
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "easy",
+    "Question": "The word latent means __________.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "hidden",
+    "Explanation": "The word latent means hidden."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Effect of Temperature",
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "medium",
+    "Question": "On increasing the temperature of solids, the __________ of the particles increases.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "kinetic energy",
+    "Explanation": "On increasing the temperature of solids, the kinetic energy of the particles increases."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Definition of Matter",
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "easy",
+    "Question": "Everything in this universe is made up of material which scientists have named __________.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "matter",
+    "Explanation": "Everything in this universe is made up of material which scientists have named “matter”."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Gaseous State",
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "hard",
+    "Question": "Gases are highly __________ as compared to solids and liquids.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "compressible",
+    "Explanation": "We have observed that gases are highly compressible as compared to solids and liquids."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Sublimation and Deposition",
+    "Question Type": "short_question",
+    "Difficulty Level": "easy",
+    "Question": "Define sublimation and deposition based on the chapter text.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "Sublimation is the change of solid state directly to gaseous state without going through liquid state. Deposition is the change of gaseous state directly to solid state without going through liquid state.",
+    "Explanation": "Sublimation is the change of solid state directly to gaseous state without going through liquid state. Deposition is the change of gaseous state directly to solid state without going through liquid state."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Evaporation",
+    "Question Type": "short_question",
+    "Difficulty Level": "medium",
+    "Question": "Explain why evaporation causes cooling.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "Evaporation is a surface phenomenon where particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state. This process of particles gaining energy from the surface leads to cooling.",
+    "Explanation": "Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state. Evaporation causes cooling."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Boiling vs Evaporation",
+    "Question Type": "short_question",
+    "Difficulty Level": "medium",
+    "Question": "What is the difference between boiling and evaporation as described in the chapter?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "Boiling is a bulk phenomenon. Particles from the bulk (whole) of the liquid change into vapour state. Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state.",
+    "Explanation": "Boiling is a bulk phenomenon. Particles from the bulk (whole) of the liquid change into vapour state. Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Effect of Temperature on Solids",
+    "Question Type": "short_question",
+    "Difficulty Level": "hard",
+    "Question": "Explain how the kinetic energy of particles changes when solids are heated, leading to melting.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "On increasing the temperature of solids, the kinetic energy of the particles increases. Due to the increase in kinetic energy, the particles start vibrating with greater speed. The energy supplied by heat overcomes the forces of attraction between the particles. The particles leave their fixed positions and start moving more freely, and a stage is reached when the solid melts and is converted to a liquid.",
+    "Explanation": "On increasing the temperature of solids, the kinetic energy of the particles increases. Due to the increase in kinetic energy, the particles start vibrating with greater speed. The energy supplied by heat overcomes the forces of attraction between the particles. The particles leave their fixed positions and start moving more freely. A stage is reached when the solid melts and is converted to a liquid."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Early Classification of Matter",
+    "Question Type": "short_question",
+    "Difficulty Level": "easy",
+    "Question": "Name the five basic elements (Panch Tatva) as classified by early Indian philosophers.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "The five basic elements (Panch Tatva) are air, earth, fire, sky and water.",
+    "Explanation": "Early Indian philosophers classified matter in the form of five basic elements — the “Panch Tatva” — air, earth, fire, sky and water."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Latent Heat of Fusion",
+    "Question Type": "long_question",
+    "Difficulty Level": "hard",
+    "Question": "Explain the concept of latent heat of fusion. How does it affect the energy of particles in water compared to ice at the same temperature?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "The amount of heat energy that is required to change 1 kg of a solid into liquid at atmospheric pressure at its melting point is known as the latent heat of fusion. When a solid melts, its temperature remains the same, so the heat energy supplied gets used up in changing the state by overcoming the forces of attraction between the particles. This heat energy is absorbed by ice without showing any rise in temperature and is known as the latent heat (hidden heat). Therefore, particles in water at 0oC (273 K) have more energy as compared to particles in ice at the same temperature because they have absorbed this extra latent heat of fusion.",
+    "Explanation": "The amount of heat energy that is required to change 1 kg of a solid into liquid at atmospheric pressure at its melting point is known as the latent heat of fusion. When a solid melts, its temperature remains the same, so where does the heat energy go? This heat gets used up in changing the state by overcoming the forces of attraction between the particles. As this heat energy is absorbed by ice without showing any rise in temperature, it is considered that it gets hidden into the contents of the beaker and is known as the latent heat. So, particles in water at 0oC (273 K) have more energy as compared to particles in ice at the same temperature."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Effect of Change of Temperature",
+    "Question Type": "long_question",
+    "Difficulty Level": "hard",
+    "Question": "Describe the effect of changing temperature on the states of matter, specifically focusing on the transition from solid to liquid and liquid to gas, including the role of kinetic energy and forces of attraction.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "On increasing the temperature of solids, the kinetic energy of the particles increases. Due to the increase in kinetic energy, the particles start vibrating with greater speed. The energy supplied by heat overcomes the forces of attraction between the particles. The particles leave their fixed positions and start moving more freely. A stage is reached when the solid melts and is converted to a liquid at its melting point. When heat energy is supplied to water (liquid), particles start moving even faster. At a certain temperature, the liquid starts changing into gas, known as its boiling point. Particles from the bulk of the liquid gain enough energy to change into the vapour state. Particles in steam (water vapour at 373 K) have more energy than water at the same temperature because they have absorbed extra energy in the form of latent heat of vaporisation.",
+    "Explanation": "On increasing the temperature of solids, the kinetic energy of the particles increases. Due to the increase in kinetic energy, the particles start vibrating with greater speed. The energy supplied by heat overcomes the forces of attraction between the particles. The particles leave their fixed positions and start moving more freely. A stage is reached when the solid melts and is converted to a liquid. The minimum temperature at which a solid melts to become a liquid at the atmospheric pressure is called its melting point. When we supply heat energy to water, particles start moving even faster. At a certain temperature, a point is reached when the particles have enough energy to break free from the forces of attraction of each other. At this temperature the liquid starts changing into gas. The temperature at which a liquid starts boiling at the atmospheric pressure is known as its boiling point. Particles in steam, that is, water vapour at 373 K (1000 C) have more energy than water at the same temperature. This is because particles in steam have absorbed extra energy in the form of latent heat of vaporisation."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Evaporation",
+    "Question Type": "long_question",
+    "Difficulty Level": "medium",
+    "Question": "Discuss the factors that affect the rate of evaporation and explain how evaporation causes cooling.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed. Evaporation is a surface phenomenon where particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state. This process of surface particles absorbing energy to escape into the vapour state results in the remaining liquid or surface losing energy, thereby causing cooling.",
+    "Explanation": "The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed. Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state. Evaporation causes cooling."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Effect of Pressure and Temperature",
+    "Question Type": "long_question",
+    "Difficulty Level": "hard",
+    "Question": "How do pressure and temperature together determine the state of a substance? Provide an example from the text.",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "Pressure and temperature determine the state of a substance, whether it will be solid, liquid or gas. The difference in various states of matter is due to the difference in the distances between the constituent particles. When pressure is applied and a gas is compressed, the distances between constituent particles decrease, which can lead to a change of state. An example from the text is solid carbon dioxide, which is also known as dry ice. Its state and interconversion (solid to gas directly) are determined by pressure and temperature.",
+    "Explanation": "Thus, we can say that pressure and temperature determine the state of a substance, whether it will be solid, liquid or gas. We have already learnt that the difference in various states of matter is due to the difference in the distances between the constituent particles. What will happen when we start putting pressure and compress a gas? This is the reason that solid carbon dioxide is also known as dry ice."
+  },
+  {
+    "Topics Name": "MATTER IN OUR SURROUNDINGS",
+    "Subtopic Name": "Latent Heat of Vaporisation",
+    "Question Type": "long_question",
+    "Difficulty Level": "hard",
+    "Question": "Explain the concept of latent heat of vaporisation. How does the energy of particles in steam compare to water at the same temperature?",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "Latent heat of vaporisation is the heat energy required to change 1 kg of a liquid to gas at atmospheric pressure at its boiling point. Particles in steam, that is, water vapour at 373 K (100oC) have more energy than water at the same temperature. This is because particles in steam have absorbed extra energy in the form of latent heat of vaporisation, which is the hidden heat energy required for the phase change without a rise in temperature.",
+    "Explanation": "Latent heat of vaporisation is the heat energy required to change 1 kg of a liquid to gas at atmospheric pressure at its boiling point. Particles in steam, that is, water vapour at 373 K (100oC) have more energy than water at the same temperature. This is because particles in steam have absorbed extra energy in the form of latent heat of vaporisation."
+  }
+]

@@ -1,4 +1,5 @@
 import re
+import unicodedata
 from enum import Enum
 from typing import Dict, List
 
@@ -21,11 +22,61 @@ class GenerateType(str, Enum):
 
 
 CHUNK_SIZE = 1200
-SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?\u0964\u0965])\s+")
+# Split sentences on terminal punctuation with or without spaces.
+# Indic OCR often omits spaces after "।" and ".".
+SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?\u0964\u0965])(?:\s+|(?=\S))")
 LETTER_RE = re.compile(r"[A-Za-z\u0900-\u097F]")
+DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
+UNICODE_ESCAPE_RE = re.compile(r"\\u[0-9a-fA-F]{4}")
+ZERO_WIDTH_RE = re.compile(r"[\u200b-\u200f\u2060\ufeff]")
+MOJIBAKE_MARKERS = ("à¤", "Ã", "Â", "�")
+
+
+def _text_quality_score(text: str) -> float:
+    if not text:
+        return float("-inf")
+
+    letters = len(LETTER_RE.findall(text))
+    devanagari = len(DEVANAGARI_RE.findall(text))
+    escaped = len(UNICODE_ESCAPE_RE.findall(text))
+    marker_hits = sum(text.count(marker) for marker in MOJIBAKE_MARKERS)
+    control_chars = sum(1 for ch in text if ord(ch) < 32 and ch not in ("\n", "\t"))
+    return (letters + (0.5 * devanagari)) - (3 * escaped) - (4 * marker_hits) - (2 * control_chars)
+
+
+def _maybe_decode_unicode_escapes(text: str) -> str:
+    if len(UNICODE_ESCAPE_RE.findall(text)) < 3:
+        return text
+
+    def repl(match: re.Match[str]) -> str:
+        return chr(int(match.group(0)[2:], 16))
+
+    candidate = UNICODE_ESCAPE_RE.sub(repl, text)
+    return candidate if _text_quality_score(candidate) > _text_quality_score(text) else text
+
+
+def _maybe_fix_mojibake(text: str) -> str:
+    if not any(marker in text for marker in MOJIBAKE_MARKERS):
+        return text
+
+    candidates = [text]
+    for source_encoding in ("latin-1", "cp1252"):
+        try:
+            candidates.append(text.encode(source_encoding).decode("utf-8"))
+        except UnicodeError:
+            continue
+
+    return max(candidates, key=_text_quality_score)
 
 
 def clean_text(text: str) -> str:
+    text = unicodedata.normalize("NFKC", text)
+    text = _maybe_decode_unicode_escapes(text)
+    text = _maybe_fix_mojibake(text)
+
+    text = ZERO_WIDTH_RE.sub("", text)
+    text = text.replace("\ufffd", "")
+    text = text.replace("\u00a0", " ")
     text = text.replace("\r\n", "\n").replace("\r", "\n")
     text = text.replace("\x0c", "\n")
     text = re.sub(r"[ \t]+", " ", text)

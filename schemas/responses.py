@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, AliasChoices
 from typing import List, Optional, Union, Dict
 
 
@@ -56,7 +56,8 @@ class UploadResponse(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
-                "status": "uploaded"
+                "status": "success",
+                "message": "Chapter uploaded successfully"
             }
         }
     )
@@ -69,6 +70,105 @@ class DeleteResponse(BaseModel):
 # ---------------------------------------------------------------------------
 # Content Generation Responses (based on prompts.py JSON formats)
 # ---------------------------------------------------------------------------
+
+class CSVQuestionRow(BaseModel):
+    topics_name: Optional[str] = Field(
+        default=None,
+        alias="Topics Name",
+        validation_alias=AliasChoices("Topics Name", "TopicsName", "topics_name"),
+    )
+    subtopic_name: Optional[str] = Field(
+        default=None,
+        alias="Subtopic Name",
+        validation_alias=AliasChoices("Subtopic Name", "SubtopicName", "subtopic_name"),
+    )
+    question_type: str = Field(
+        alias="Question Type",
+        validation_alias=AliasChoices("Question Type", "QuestionType", "question_type"),
+    )
+    difficulty_level: Optional[str] = Field(
+        default=None,
+        alias="Difficulty Level",
+        validation_alias=AliasChoices("Difficulty Level", "DifficultyLevel", "difficulty_level"),
+    )
+    question: Optional[str] = Field(
+        default=None,
+        alias="Question",
+        validation_alias=AliasChoices("Question", "question"),
+    )
+    sub_question_type: Optional[str] = Field(
+        default=None,
+        alias="sub question type",
+        validation_alias=AliasChoices("sub question type", "subquestiontype", "sub_question_type"),
+    )
+    sub_question: Optional[str] = Field(
+        default=None,
+        alias="sub question",
+        validation_alias=AliasChoices("sub question", "subquestion", "sub_question"),
+    )
+    question_image: Optional[str] = Field(
+        default=None,
+        alias="Question Image",
+        validation_alias=AliasChoices("Question Image", "QuestionImage", "question_image"),
+    )
+    option_a: Optional[str] = Field(
+        default=None,
+        alias="Option A",
+        validation_alias=AliasChoices("Option A", "OptionA", "option_a"),
+    )
+    option_b: Optional[str] = Field(
+        default=None,
+        alias="Option B",
+        validation_alias=AliasChoices("Option B", "OptionB", "option_b"),
+    )
+    option_c: Optional[str] = Field(
+        default=None,
+        alias="Option C",
+        validation_alias=AliasChoices("Option C", "OptionC", "option_c"),
+    )
+    option_d: Optional[str] = Field(
+        default=None,
+        alias="Option D",
+        validation_alias=AliasChoices("Option D", "OptionD", "option_d"),
+    )
+    correct_option: Optional[str] = Field(
+        default=None,
+        alias="Correct Option",
+        validation_alias=AliasChoices("Correct Option", "CorrectOption", "correct_option"),
+    )
+    answer: Optional[str] = Field(
+        default=None,
+        alias="Answer",
+        validation_alias=AliasChoices("Answer", "answer"),
+    )
+    explanation: Optional[str] = Field(
+        default=None,
+        alias="Explanation",
+        validation_alias=AliasChoices("Explanation", "explanation"),
+    )
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_schema_extra={
+            "example": {
+                "Topics Name": "Matter",
+                "Subtopic Name": "States of Matter",
+                "Question Type": "mcq",
+                "Difficulty Level": "easy",
+                "Question": "Which state has fixed shape and fixed volume?",
+                "sub question type": None,
+                "sub question": None,
+                "Question Image": None,
+                "Option A": "Solid",
+                "Option B": "Liquid",
+                "Option C": "Gas",
+                "Option D": "Plasma",
+                "Correct Option": "A",
+                "Answer": "Solid",
+                "Explanation": "Solid has fixed shape and fixed volume as per chapter text."
+            }
+        }
+    )
 
 class MCQ(BaseModel):
     question: str
@@ -304,6 +404,7 @@ class QuestionPaperResponse(BaseModel):
 
 # Generic type for /{question_type} endpoint
 GenerateResponse = Union[
+    List[CSVQuestionRow],
     List[MCQ],
     List[FillInTheBlank],
     List[ShortQuestion],

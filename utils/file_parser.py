@@ -3,6 +3,8 @@ import os
 import shutil
 import logging
 import re
+import multiprocessing as mp
+from queue import Empty
 
 try:
     import pymupdf4llm
@@ -19,6 +21,65 @@ _DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
 _LATIN_RE = re.compile(r"[A-Za-z]")
 _DIGIT_RE = re.compile(r"\d")
 _SYMBOLS_ONLY_RE = re.compile(r"^[^\w\u0900-\u097F]+$")
+
+
+def _extract_pdf_fast_text(doc) -> str:
+    """Fast fallback extractor using native PyMuPDF text blocks only."""
+    pages = []
+    for page in doc:
+        text = page.get_text("text")
+        if text:
+            pages.append(text.replace("\x0c", "").strip())
+    return "\n\n".join(p for p in pages if p)
+
+
+def _pymupdf4llm_worker(pdf_bytes: bytes, kwargs: dict, out_q):
+    doc = None
+    try:
+        if pymupdf is None or pymupdf4llm is None:
+            raise RuntimeError("PyMuPDF / PyMuPDF4LLM not available in worker.")
+        doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+        text = pymupdf4llm.to_markdown(doc, **kwargs)
+        out_q.put({"ok": True, "text": text})
+    except Exception as exc:
+        out_q.put({"ok": False, "error": str(exc)})
+    finally:
+        if doc is not None:
+            doc.close()
+
+
+def _extract_with_timeout(pdf_bytes: bytes, timeout_sec: int) -> str:
+    """
+    Run pymupdf4llm extraction in a child process so we can enforce timeout.
+    This avoids request hangs on complex pages.
+    """
+    ctx = mp.get_context("spawn")
+    out_q = ctx.Queue(maxsize=1)
+    kwargs = {
+        "ignore_images": True,
+        "ignore_graphics": True,
+        "detect_bg_color": False,
+        "show_progress": False,
+        "table_strategy": "text",
+    }
+    proc = ctx.Process(target=_pymupdf4llm_worker, args=(pdf_bytes, kwargs, out_q), daemon=True)
+    proc.start()
+    proc.join(timeout=timeout_sec)
+
+    if proc.is_alive():
+        proc.terminate()
+        proc.join(timeout=5)
+        raise TimeoutError(f"pymupdf4llm extraction timed out after {timeout_sec}s")
+
+    try:
+        result = out_q.get_nowait()
+    except Empty:
+        raise RuntimeError("pymupdf4llm worker exited without result")
+
+    if not result.get("ok"):
+        raise RuntimeError(result.get("error") or "Unknown pymupdf4llm extraction error")
+
+    return result.get("text", "")
 
 
 def _normalize_language(language: str) -> str:
@@ -225,8 +286,36 @@ def extract_text(file, language: str = "auto") -> str:
                         "set TESSDATA_PREFIX to tessdata, and install Hindi data (hin). "
                         f"Original error: {exc}"
                     ) from exc
-            logger.info("PDF extraction mode=pymupdf4llm language=auto")
-            return pymupdf4llm.to_markdown(doc)
+            auto_mode = os.getenv("PDF_AUTO_MODE", "fast_text").strip().lower()
+            fast_text = _extract_pdf_fast_text(doc)
+
+            # Reliability-first default: native text extraction is significantly faster
+            # for many school PDFs and avoids long request hangs.
+            if auto_mode != "markdown" and fast_text.strip():
+                logger.info(
+                    "PDF extraction mode=fast_text language=auto pages=%s chars=%s",
+                    doc.page_count,
+                    len(fast_text),
+                )
+                return fast_text
+
+            timeout_sec = int(os.getenv("PDF_MARKDOWN_TIMEOUT_SEC", "30"))
+            logger.info(
+                "PDF extraction mode=pymupdf4llm language=auto pages=%s timeout=%ss",
+                doc.page_count,
+                timeout_sec,
+            )
+            try:
+                md = _extract_with_timeout(pdf_bytes, timeout_sec=timeout_sec)
+                if md and md.strip():
+                    return md
+                logger.warning("pymupdf4llm returned empty output. Falling back to fast text extractor.")
+            except TimeoutError as exc:
+                logger.warning(f"{exc}. Falling back to fast text extractor.")
+            except Exception as exc:
+                logger.warning(f"pymupdf4llm failed: {exc}. Falling back to fast text extractor.")
+
+            return fast_text
         finally:
             doc.close()
 

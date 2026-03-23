@@ -1,133 +1,57 @@
 {
   "info": {
-    "_postman_id": "8b9cad0e-1f20-41d5-b0b3-4c9e2c71c4c5",
+    "_postman_id": "0b57eb15-d913-43d5-bb00-2f0a9539d3cf",
     "name": "RAG Content Generator API",
-    "description": "API for generating educational content (MCQs, Question Papers, Summaries, etc.) using RAG and Gemini.",
+    "description": "Postman collection for session + generation APIs (6 core routes). Includes output-format examples sourced from text_output folder.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "General",
-      "item": [
-        {
-          "name": "Root",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/",
-              "host": ["{{baseUrl}}"],
-              "path": [""]
-            }
-          },
-          "response": [
-            {
-              "name": "Successful Root Response",
-              "originalRequest": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/",
-                  "host": ["{{baseUrl}}"],
-                  "path": [""]
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "json",
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "cookie": [],
-              "body": "{\n    \"app\": \"RAG Content Generator\",\n    \"description\": \"Generate question papers, notes, summaries, mindmaps, and more from NCERT chapters.\",\n    \"endpoints\": [\"/session/start\", \"/generate/{type}\", \"/docs\"]\n}"
-            }
-          ]
-        },
-        {
-          "name": "API Status",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "status"]
-            }
-          },
-          "response": [
-            {
-              "name": "Successful Status Response",
-              "originalRequest": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/api/status",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "status"]
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "json",
-              "header": [
-                { "key": "Content-Type", "value": "application/json" }
-              ],
-              "cookie": [],
-              "body": "{\n    \"status\": \"ok\"\n}"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Session Management",
+      "name": "Session APIs",
       "item": [
         {
           "name": "Start Session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/session/start",
+            "description": "Creates a new session and returns session_id."
+          },
           "event": [
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.session_id) {",
-                  "    pm.collectionVariables.set(\"sessionId\", jsonData.session_id);",
-                  "    console.log(\"Session ID set to: \" + jsonData.session_id);",
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "const data = pm.response.json();",
+                  "if (data && data.session_id) {",
+                  "  pm.collectionVariables.set('sessionId', data.session_id);",
+                  "  console.log('Session ID set:', data.session_id);",
                   "}"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/session/start",
-              "host": ["{{baseUrl}}"],
-              "path": ["session", "start"]
-            }
-          },
           "response": [
             {
-              "name": "Successful Session Start",
+              "name": "SessionStartResponse",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/session/start",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["session", "start"]
-                }
+                "url": "{{baseUrl}}/session/start"
               },
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
               "header": [
-                { "key": "Content-Type", "value": "application/json" }
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
               "cookie": [],
-              "body": "{\n    \"session_id\": \"550e8400-e29b-41d4-a716-446655440000\"\n}"
+              "body": "{\n  \"session_id\": \"550e8400-e29b-41d4-a716-446655440000\"\n}"
             }
           ]
         },
@@ -142,36 +66,44 @@
                 {
                   "key": "file",
                   "type": "file",
-                  "src": []
+                  "src": "",
+                  "description": "Select PDF/DOCX/TXT file"
+                },
+                {
+                  "key": "chapter",
+                  "value": "{{chapterName}}",
+                  "type": "text"
+                },
+                {
+                  "key": "language",
+                  "value": "{{language}}",
+                  "type": "text",
+                  "description": "auto | hin | mar | eng | hin+eng"
                 }
               ]
             },
-            "url": {
-              "raw": "{{baseUrl}}/session/{{sessionId}}/upload",
-              "host": ["{{baseUrl}}"],
-              "path": ["session", "{{sessionId}}", "upload"]
-            }
+            "url": "{{baseUrl}}/session/{{sessionId}}/upload",
+            "description": "Uploads chapter content and builds chunks/vector store."
           },
           "response": [
             {
-              "name": "Successful Upload",
+              "name": "UploadResponse",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/session/{{sessionId}}/upload",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["session", "{{sessionId}}", "upload"]
-                }
+                "url": "{{baseUrl}}/session/{{sessionId}}/upload"
               },
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
               "header": [
-                { "key": "Content-Type", "value": "application/json" }
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
               "cookie": [],
-              "body": "{\n    \"status\": \"uploaded\"\n}"
+              "body": "{\n  \"status\": \"uploaded\"\n}"
             }
           ]
         },
@@ -180,87 +112,72 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/session/{{sessionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["session", "{{sessionId}}"]
-            }
+            "url": "{{baseUrl}}/session/{{sessionId}}",
+            "description": "Deletes a session and all generated files."
           },
           "response": [
             {
-              "name": "Successful Deletion",
+              "name": "DeleteResponse",
               "originalRequest": {
                 "method": "DELETE",
                 "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/session/{{sessionId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["session", "{{sessionId}}"]
-                }
+                "url": "{{baseUrl}}/session/{{sessionId}}"
               },
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
               "header": [
-                { "key": "Content-Type", "value": "application/json" }
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
               "cookie": [],
-              "body": "{\n    \"status\": \"deleted\"\n}"
+              "body": "{\n  \"status\": \"success\",\n  \"isDeleted\": true\n}"
             }
           ]
         }
       ]
     },
     {
-      "name": "Content Generation",
+      "name": "Generate APIs",
       "item": [
         {
           "name": "Generate Question Paper",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"class_\": 10,\n    \"subject\": \"Science\",\n    \"difficulty\": \"medium\",\n    \"marks\": {\n        \"Section A\": {\n            \"count\": 5,\n            \"marks_each\": 1\n        },\n        \"Section B\": {\n            \"count\": 3,\n            \"marks_each\": 3\n        }\n    }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\n  \"class_\": 9,\n  \"subject\": \"Science\",\n  \"difficulty\": \"medium\",\n  \"marks\": {\n    \"mcq\": {\n      \"count\": 10,\n      \"marks_each\": 1\n    },\n    \"fill_in_the_blanks\": {\n      \"count\": 5,\n      \"marks_each\": 1\n    },\n    \"short_question\": {\n      \"count\": 5,\n      \"marks_each\": 2\n    },\n    \"long_question\": {\n      \"count\": 2,\n      \"marks_each\": 5\n    }\n  }\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/generate/question_paper?session_id={{sessionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["generate", "question_paper"],
-              "query": [
-                {
-                  "key": "session_id",
-                  "value": "{{sessionId}}"
-                }
-              ]
-            }
+            "url": "{{baseUrl}}/generate/question_paper?session_id={{sessionId}}",
+            "description": "Generate a full question paper using PaperBlueprint."
           },
           "response": [
             {
-              "name": "Example Question Paper",
+              "name": "QuestionPaperResponse (from text_output/question_paper.json)",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/generate/question_paper?session_id={{sessionId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["generate", "question_paper"],
-                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
-                }
+                "url": "{{baseUrl}}/generate/question_paper?session_id={{sessionId}}"
               },
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
               "header": [
-                { "key": "Content-Type", "value": "application/json" }
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
               "cookie": [],
-              "body": "{\n    \"mcq\": [\n        {\n            \"question\": \"Physical nature of matter is ________.\",\n            \"options\": [\"Continuous\", \"Particulate\", \"Neither\", \"Both\"],\n            \"correct_index\": 1,\n            \"marks\": 1\n        }\n    ],\n    \"fill_in_the_blanks\": [\n        {\n            \"question\": \"Matter is made of _______.\",\n            \"answer\": \"particles\",\n            \"marks\": 1\n        }\n    ],\n    \"short_question\": [],\n    \"long_question\": []\n}"
+              "body": "{\n  \"mcq\": [\n    {\n      \"question\": \"In scientific notation or scientific form, how are numbers written?\",\n      \"options\": [\n        \"x + 10y\",\n        \"x - 10y\",\n        \"x × 10y\",\n        \"x ÷ 10y\"\n      ],\n      \"correct_index\": 2,\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"What is the coefficient in scientific notation x × 10y?\",\n      \"options\": [\n        \"x ≥ 1 and x < 10\",\n        \"x < 1\",\n        \"x > 10\",\n        \"x = 10\"\n      ],\n      \"correct_index\": 0,\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"What is the exponent in scientific notation x × 10y?\",\n      \"options\": [\n        \"a positive integer\",\n        \"a negative integer\",\n        \"any integer\",\n        \"a fraction\"\n      ],\n      \"correct_index\": 2,\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"What is the approximate time for light to reach the Earth from the Sun?\",\n      \"options\": [\n        \"about 5 minutes\",\n        \"about 8 minutes\",\n        \"about 10 minutes\",\n        \"about 15 minutes\"\n      ],\n      \"correct_index\": 1,\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"What is 105 seconds approximately equal to?\",\n      \"options\": [\n        \"1.16 hours\",\n        \"1.16 minutes\",\n        \"1.16 days\",\n        \"1.16 weeks\"\n      ],\n      \"correct_index\": 2,\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"What is 106 seconds approximately equal to?\",\n      \"options\": [\n        \"11.57 hours\",\n        \"11.57 minutes\",\n        \"11.57 days\",\n        \"11.57 weeks\"\n      ],\n      \"correct_index\": 2,\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"What is the value of x0 where x ≠ 0?\",\n      \"options\": [\n        \"0\",\n        \"1\",\n        \"x\",\n        \"undefined\"\n      ],\n      \"correct_index\": 1,\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"How is n × n read?\",\n      \"options\": [\n        \"n cubed\",\n        \"n to the power 1\",\n        \"n raised to the power 3\",\n        \"n squared or n raised to the power 2\"\n      ],\n      \"correct_index\": 3,\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"How are square numbers expressed?\",\n      \"options\": [\n        \"n3\",\n        \"n2\",\n        \"n4\",\n        \"n1\"\n      ],\n      \"correct_index\": 1,\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"How are cube numbers expressed?\",\n      \"options\": [\n        \"n2\",\n        \"n4\",\n        \"n3\",\n        \"n1\"\n      ],\n      \"correct_index\": 2,\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    }\n  ],\n  \"fill_in_the_blanks\": [\n    {\n      \"question\": \"Any number can be written as the product of a number between 1 and 10 and a ______ of 10.\",\n      \"answer\": \"power\",\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"In scientific notation or scientific form, the exponent y is ______ integer.\",\n      \"answer\": \"any\",\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"The distance around the Earth is considered as ______ km.\",\n      \"answer\": \"40,000\",\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"Time needed to make a cup of tea is 5 – 10 minutes, which is approximately ______ seconds.\",\n      \"answer\": \"4 × 102 – 8 × 102\",\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"For any letter number a, 20 = 2a – a = 2a ÷ 2a = ______.\",\n      \"answer\": \"1\",\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"When a line of length 24 units is halved 5 times, we get 24 ÷ 25 = \\\\( \\\\frac{1}{2} \\\\) units.\",\n      \"answer\": \"1/2\",\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"Similarly, 10–3 = \\\\( \\\\frac{1}{10^3} \\\\).\",\n      \"answer\": \"1/103\",\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"The initial thickness of the paper was ______ cm.\",\n      \"answer\": \"0.001\",\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"Upon folding once, its thickness became 0.001 cm × 2 = ______ cm.\",\n      \"answer\": \"0.002\",\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"The Sun is located ______ m from the centre of our Milky Way galaxy.\",\n      \"answer\": \"30,00,00,00,00,00,00,00,00,000\",\n      \"marks\": 1,\n      \"difficulty\": \"easy\"\n    }\n  ],\n  \"short_question\": [\n    {\n      \"question\": \"Define scientific notation or scientific form.\",\n      \"answer\": \"In scientific notation or scientific form (also called standard form), we write numbers as x × 10 y, where x ≥ 1 and x < 10 is the coefficient and y, the exponent, is any integer.\",\n      \"figure_reference\": null,\n      \"marks\": 3,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"Explain why the exponent y is often more important than the coefficient x in scientific notation.\",\n      \"answer\": \"Often, the exponent y is more important than the coefficient x. Indeed, if the 2 is changed to 3, the population increases by one-half, i.e., 2 crore to 3 crore, whereas if the 7 is changed to 8, the change in population is 10 times, i.e., 2 crores to 20 crores.\",\n      \"figure_reference\": null,\n      \"marks\": 3,\n      \"difficulty\": \"hard\"\n    },\n    {\n      \"question\": \"What is the general rule for \\\\( x^0 \\\\) where \\\\( x \\\\neq 0 \\\\)?\",\n      \"answer\": \"In general, \\\\( x^a \\\\div x^a = x^{a-a} = x^0 \\\\), and so \\\\( 1 = x^0 \\\\), where x ≠ 0 and a is a counting number.\",\n      \"figure_reference\": null,\n      \"marks\": 3,\n      \"difficulty\": \"easy\"\n    },\n    {\n      \"question\": \"Explain how the thickness of a paper changes when folded multiple times, starting with an initial thickness of 0.001 cm.\",\n      \"answer\": \"Upon folding once, its thickness became 0.001 cm × 2 = 0.002 cm. Folding it twice, its thickness became — 0.001 cm × 2 × 2 = 0.004 cm, or 0.001 cm × 22 = 0.004 cm (in shorthand). Upon folding it thrice, its thickness became — 0.001 cm × 2 × 2 × 2, or 0.001 cm × 23 = 0.008 cm.\",\n      \"figure_reference\": null,\n      \"marks\": 3,\n      \"difficulty\": \"medium\"\n    },\n    {\n      \"question\": \"Write the expanded form of 47561 using powers of 10.\",\n      \"answer\": \"(4 × 104) + (7 × 103) + (5 × 102) + (6 × 101) + (1 × 100).\",\n      \"figure_reference\": null,\n      \"marks\": 3,\n      \"difficulty\": \"easy\"\n    }\n  ],\n  \"long_question\": [\n    {\n      \"question\": \"Explain how \\\\( 4^6 \\\\) can be evaluated in two different ways using exponential forms.\",\n      \"answer\": \"46 can be evaluated in these two ways, (4 × 4 × 4) × (4 × 4 × 4) = 43 × 43 = 64 × 64 = 4096. 43 × 43 is the square of 43, i.e., 43 × 43 can also be written as (43)2. (4 × 4) × (4 × 4) × (4 × 4) = 42 × 42 × 42 = 16 × 16 × 16 = 4096. 42 × 42 × 42 is the cube of 42, i.e., 42 × 42 × 42 can also be written as (42)3.\",\n      \"figure_reference\": null,\n      \"marks\": 5,\n      \"difficulty\": \"hard\"\n    },\n    {\n      \"question\": \"Write the number 561.903 in expanded form using powers of 10.\",\n      \"answer\": \"561.903 = (5 × 100) + (6 × 10) + 1 + (9 × \\\\( \\\\frac{1}{10} \\\\)) + (0 × \\\\( \\\\frac{1}{100} \\\\)) + (3 × \\\\( \\\\frac{1}{1000} \\\\)). Writing it using powers of 10, we have 561.903 = (5 × 102) + (6 × 101) + (1 × 100) + (9 × 10–1) + (0 × 10–2) + (3 × 10–3).\",\n      \"figure_reference\": null,\n      \"marks\": 5,\n      \"difficulty\": \"medium\"\n    },\n    {\n      \"question\": \"What is the general rule for \\\\( (n^a)^b \\\\)? Provide an example from the text.\",\n      \"answer\": \"In general, \\\\( (n^a)^b = (n^b) \\\\). For example, 210 = (2 × 2 × 2 × 2 × 2) × (2 × 2 × 2 × 2 × 2) = (25) × (25) = (25)2.\",\n      \"figure_reference\": null,\n      \"marks\": 5,\n      \"difficulty\": \"medium\"\n    },\n    {\n      \"question\": \"Explain the concept of negative exponents using the example of halving a line of length 24 units.\",\n      \"answer\": \"When a line of length 24 units is halved 5 times, 24 ÷ 25 = \\\\( \\\\frac{1}{2} \\\\) units. Using the generalised form, we get 24 ÷ 25= 2(4 – 5) = 2– 1. So, 2– 1 = \\\\( \\\\frac{1}{2} \\\\). When a line of length 24 units is halved 10 times, we get 24 ÷ 210= 2(4 – 10) = 2– 6 units. When expanded, 24 ÷ 210 = \\\\( \\\\frac{1}{2^6} \\\\) = \\\\( \\\\frac{1}{64} \\\\), which is also written as 2– 6.\",\n      \"figure_reference\": null,\n      \"marks\": 5,\n      \"difficulty\": \"hard\"\n    },\n    {\n      \"question\": \"Write the large number facts about the Sun and stars in our galaxy.\",\n      \"answer\": \"(i) The Sun is located 30,00,00,00,00,00,00,00,00,000 m from the centre of our Milky Way galaxy. (ii) The number of stars in our galaxy is 1,00,00,00,00,000.\",\n      \"figure_reference\": null,\n      \"marks\": 5,\n      \"difficulty\": \"easy\"\n    }\n  ]\n}"
             }
           ]
         },
@@ -269,244 +186,210 @@
           "request": {
             "method": "POST",
             "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/generate/lession/mindmap?session_id={{sessionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["generate", "lession", "mindmap"],
-              "query": [
-                {
-                  "key": "session_id",
-                  "value": "{{sessionId}}"
-                }
-              ]
-            }
+            "url": "{{baseUrl}}/generate/lession/mindmap?session_id={{sessionId}}",
+            "description": "Generate mindmap JSON from uploaded chapter."
           },
           "response": [
             {
-              "name": "Example Mindmap",
+              "name": "MindmapResponse (from text_output/mindmap.json)",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/generate/lession/mindmap?session_id={{sessionId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["generate", "lession", "mindmap"],
-                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
-                }
+                "url": "{{baseUrl}}/generate/lession/mindmap?session_id={{sessionId}}"
               },
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
               "header": [
-                { "key": "Content-Type", "value": "application/json" }
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
               "cookie": [],
-              "body": "{\n  \"root\": \"MATTER IN OUR SURROUNDINGS\",\n  \"branches\": [\n    {\n      \"topic\": \"Matter\",\n      \"subtopics\": [\n        \"occupy space\",\n        \"have mass\"\n      ]\n    }\n  ]\n}"
+              "body": "{\n  \"root\": \"MATTER IN OUR SURROUNDINGS\",\n  \"branches\": [\n    {\n      \"topic\": \"Matter\",\n      \"subtopics\": [\n        \"Everything in this universe is made up of material which scientists have named “matter”\",\n        \"occupy space\",\n        \"have mass\",\n        \"volume\",\n        \"Panch Tatva\",\n        \"air\",\n        \"earth\",\n        \"fire\",\n        \"sky\",\n        \"water\",\n        \"physical properties\",\n        \"chemical nature\"\n      ]\n    },\n    {\n      \"topic\": \"Physical Nature of Matter\",\n      \"subtopics\": [\n        \"MATTER IS MADE UP OF PARTICLES\",\n        \"continuous like a block of wood\",\n        \"made up of particles like sand\",\n        \"Activity 1.1\"\n      ]\n    },\n    {\n      \"topic\": \"States of Matter\",\n      \"subtopics\": [\n        \"arrangement of particles is most ordered in the case of solids\",\n        \"in the case of liquids layers of particles can slip and slide over each other\",\n        \"for gases, there is no order, particles just move about randomly\",\n        \"high compressibility\",\n        \"high speed of particles\",\n        \"large space between them\",\n        \"diffusing very fast into other gases\",\n        \"pressure exerted by the gas\",\n        \"inter-convertible\",\n        \"changing temperature or pressure\",\n        \"Sublimation\",\n        \"Deposition\"\n      ]\n    }\n  ]\n}"
             }
           ]
         },
         {
-          "name": "Generate MCQ Only",
+          "name": "Generate By Type",
           "request": {
             "method": "POST",
             "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/generate/only_mcq?session_id={{sessionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["generate", "only_mcq"],
-              "query": [
-                {
-                  "key": "session_id",
-                  "value": "{{sessionId}}"
-                }
-              ]
-            }
+            "url": "{{baseUrl}}/generate/{{questionType}}?session_id={{sessionId}}",
+            "description": "questionType values: only_mcq, only_fill_blank, only_short_question, only_long_question, only_case_base, summary, notes, worksheet, lesson_plan"
           },
           "response": [
             {
-              "name": "Example MCQ List",
+              "name": "only_mcq output format",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/generate/only_mcq?session_id={{sessionId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["generate", "only_mcq"],
-                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
-                }
+                "url": "{{baseUrl}}/generate/only_mcq?session_id={{sessionId}}"
               },
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
               "header": [
-                { "key": "Content-Type", "value": "application/json" }
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
               "cookie": [],
-              "body": "[\n    {\n        \"question\": \"What is the standard unit of temperature?\",\n        \"options\": [\"Celsius\", \"Kelvin\", \"Fahrenheit\", \"Pascal\"],\n        \"correct_index\": 1,\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n    }\n]"
-            }
-          ]
-        },
-        {
-          "name": "Generate Summary",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/generate/summary?session_id={{sessionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["generate", "summary"],
-              "query": [
-                {
-                  "key": "session_id",
-                  "value": "{{sessionId}}"
-                }
-              ]
-            }
-          },
-          "response": [
+              "body": "[\n  {\n    \"question\": \"What do scientists call the material everything in the universe is made up of?\",\n    \"options\": [\n      \"energy\",\n      \"matter\",\n      \"elements\",\n      \"compounds\"\n    ],\n    \"correct_index\": 1,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Everything in this universe is made up of material which scientists have named “matter”.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"According to early Indian philosophers, matter was classified into how many basic elements?\",\n    \"options\": [\n      \"Two\",\n      \"Three\",\n      \"Four\",\n      \"Five\"\n    ],\n    \"correct_index\": 3,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Early Indian philosophers classified matter in the form of five basic elements — the “Panch Tatva” — air, earth, fire, sky and water.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Which of the following is NOT one of the 'Panch Tatva' as classified by early Indian philosophers?\",\n    \"options\": [\n      \"air\",\n      \"water\",\n      \"metal\",\n      \"earth\"\n    ],\n    \"correct_index\": 2,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Early Indian philosophers classified matter in the form of five basic elements — the “Panch Tatva” — air, earth, fire, sky and water.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What are the two bases for modern scientific classification of matter?\",\n    \"options\": [\n      \"Physical properties and chemical nature\",\n      \"Shape and size\",\n      \"Mass and volume\",\n      \"Living and non-living\"\n    ],\n    \"correct_index\": 0,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Modern day scientists have evolved two types of classification of matter based on their physical properties and chemical nature.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Which of the following statements is true about matter?\",\n    \"options\": [\n      \"Matter only has mass but no volume.\",\n      \"Matter only occupies space but has no mass.\",\n      \"Matter has both mass and volume.\",\n      \"Matter is continuous like a block of wood.\"\n    ],\n    \"correct_index\": 2,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"We can also see as we look around that all the things mentioned above occupy space and have mass. In other words, they have both mass* and volume**.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is the standard unit for density?\",\n    \"options\": [\n      \"kilogram (kg)\",\n      \"cubic metre (m\\\\textsuperscript{3})\",\n      \"kilogram per cubic metre (kg m\\\\textsuperscript{–3})\",\n      \"pascal (Pa)\"\n    ],\n    \"correct_index\": 2,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Density kilogram per cubic metre kg m–3\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is the standard unit for volume?\",\n    \"options\": [\n      \"metre (m)\",\n      \"kilogram (kg)\",\n      \"cubic metre (m\\\\textsuperscript{3})\",\n      \"newton (N)\"\n    ],\n    \"correct_index\": 2,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Volume cubic metre m3\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is the standard unit for temperature?\",\n    \"options\": [\n      \"kelvin (K)\",\n      \"metre (m)\",\n      \"kilogram (kg)\",\n      \"pascal (Pa)\"\n    ],\n    \"correct_index\": 0,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Temperature kelvin K\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Which of the following is an example of water in its solid state?\",\n    \"options\": [\n      \"water vapour\",\n      \"ice\",\n      \"familiar water\",\n      \"steam\"\n    ],\n    \"correct_index\": 1,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"water can exist in three states of matter– • solid, as ice,\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"How can the state of matter be changed?\",\n    \"options\": [\n      \"Only by changing temperature\",\n      \"Only by changing pressure\",\n      \"By changing temperature or pressure\",\n      \"By changing its chemical nature\"\n    ],\n    \"correct_index\": 2,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"The state of matter can be changed by changing temperature or pressure.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is the process called when a solid state changes directly to a gaseous state without going through the liquid state?\",\n    \"options\": [\n      \"Evaporation\",\n      \"Boiling\",\n      \"Sublimation\",\n      \"Deposition\"\n    ],\n    \"correct_index\": 2,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Sublimation is the change of solid state directly to gaseous state without going through liquid state.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is the process called when a gaseous state changes directly to a solid state without going through the liquid state?\",\n    \"options\": [\n      \"Evaporation\",\n      \"Boiling\",\n      \"Sublimation\",\n      \"Deposition\"\n    ],\n    \"correct_index\": 3,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Deposition is the change of gaseous state directly to solid state without going through liquid state.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Which phenomenon is described as a surface phenomenon where particles from the surface gain enough energy to change into the vapour state?\",\n    \"options\": [\n      \"Boiling\",\n      \"Melting\",\n      \"Evaporation\",\n      \"Condensation\"\n    ],\n    \"correct_index\": 2,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is the effect of evaporation?\",\n    \"options\": [\n      \"It causes heating.\",\n      \"It causes cooling.\",\n      \"It has no effect on temperature.\",\n      \"It increases humidity.\"\n    ],\n    \"correct_index\": 1,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Evaporation causes cooling.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is Latent heat of vaporisation?\",\n    \"options\": [\n      \"The heat energy required to change 1 kg of a solid to liquid at its melting point.\",\n      \"The heat energy required to change 1 kg of a liquid to gas at atmospheric pressure at its boiling point.\",\n      \"The heat energy released when 1 kg of gas changes to liquid.\",\n      \"The heat energy required to increase the temperature of 1 kg of liquid by 1 degree Celsius.\"\n    ],\n    \"correct_index\": 1,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Latent heat of vaporisation is the heat energy required to change 1 kg of a liquid to gas at atmospheric pressure at its boiling point.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is Latent heat of fusion?\",\n    \"options\": [\n      \"The amount of heat energy required to change 1 kg of solid into liquid at its melting point.\",\n      \"The amount of heat energy required to change 1 kg of liquid into gas at its boiling point.\",\n      \"The amount of heat energy released when 1 kg of liquid freezes.\",\n      \"The amount of heat energy required to raise the temperature of 1 kg of solid.\"\n    ],\n    \"correct_index\": 0,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Latent heat of fusion is the amount of heat energy required to change 1 kg of solid into liquid at its melting point.\",\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Which of the following factors does NOT affect the rate of evaporation?\",\n    \"options\": [\n      \"Surface area exposed to the atmosphere\",\n      \"Temperature\",\n      \"Humidity\",\n      \"Mass of the liquid\"\n    ],\n    \"correct_index\": 3,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed.\",\n    \"difficulty\": \"medium\"\n  },\n  {\n    \"question\": \"How are particles arranged in solids?\",\n    \"options\": [\n      \"Particles move about randomly with no order.\",\n      \"Layers of particles can slip and slide over each other.\",\n      \"The arrangement of particles is most ordered.\",\n      \"Particles move freely with greater space between them.\"\n    ],\n    \"correct_index\": 2,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"The arrangement of particles is most ordered in the case of solids, in the case of liquids layers of particles can slip and slide over each other while for gases, there is no order, particles just move about randomly.\",\n    \"difficulty\": \"medium\"\n  },\n  {\n    \"question\": \"Why is the rate of diffusion of liquids higher than that of solids?\",\n    \"options\": [\n      \"Because liquid particles are heavier than solid particles.\",\n      \"Because liquid particles have less space between them.\",\n      \"Because in the liquid state, particles move freely and have greater space between each other.\",\n      \"Because liquids have a fixed shape.\"\n    ],\n    \"correct_index\": 2,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"The rate of diffusion of liquids is higher than that of solids. This is due to the fact that in the liquid state, particles move freely and have greater space between each other as compared to particles in the solid state.\",\n    \"difficulty\": \"hard\"\n  },\n  {\n    \"question\": \"What is boiling described as?\",\n    \"options\": [\n      \"A surface phenomenon where particles from the surface change into vapour.\",\n      \"A bulk phenomenon where particles from the whole of the liquid change into vapour state.\",\n      \"A process that occurs only at room temperature.\",\n      \"A change of solid state directly to gaseous state.\"\n    ],\n    \"correct_index\": 1,\n    \"marks\": 1,\n    \"figure_reference\": null,\n    \"source_sentence\": \"Boiling is a bulk phenomenon. Particles from the bulk (whole) of the liquid change into vapour state.\",\n    \"difficulty\": \"easy\"\n  }\n]"
+            },
             {
-              "name": "Example Summary",
+              "name": "only_fill_blank output format",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/generate/summary?session_id={{sessionId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["generate", "summary"],
-                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
-                }
+                "url": "{{baseUrl}}/generate/only_fill_blank?session_id={{sessionId}}"
               },
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
               "header": [
-                { "key": "Content-Type", "value": "application/json" }
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
               "cookie": [],
-              "body": "{\n    \"summary\": [\n        \"Matter is anything that occupies space and has mass.\",\n        \"Matter exists in three states: solid, liquid, and gas.\"\n    ]\n}"
-            }
-          ]
-        },
-        {
-          "name": "Generate Notes",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/generate/notes?session_id={{sessionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["generate", "notes"],
-              "query": [
-                {
-                  "key": "session_id",
-                  "value": "{{sessionId}}"
-                }
-              ]
-            }
-          },
-          "response": [
+              "body": "[\n  {\n    \"question\": \"Everything in this universe is made up of material which scientists have named “_________”.\",\n    \"answer\": \"matter\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"All the things mentioned above occupy space and have _________.\",\n    \"answer\": \"mass\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"In other words, they have both mass* and _________**.\",\n    \"answer\": \"volume\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Early Indian philosophers classified matter in the form of five basic elements — the “_________” — air, earth, fire, sky and water.\",\n    \"answer\": \"Panch Tatva\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"According to them everything, living or non-living, was made up of these five basic _________.\",\n    \"answer\": \"elements\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Ancient Greek philosophers had arrived at a similar _________ of matter.\",\n    \"answer\": \"classification\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Modern day scientists have evolved two types of classification of matter based on their physical properties and _________ nature.\",\n    \"answer\": \"chemical\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"In this chapter we shall learn about matter based on its _________ properties.\",\n    \"answer\": \"physical\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Chemical aspects of matter will be taken up in _________ chapters.\",\n    \"answer\": \"subsequent\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"For a long time, two schools of thought prevailed regarding the _________ of matter.\",\n    \"answer\": \"nature\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"One school believed matter to be continuous like a block of wood, whereas, the other thought that matter was made up of _________ like sand.\",\n    \"answer\": \"particles\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Let us perform an activity to decide about the nature of matter — is it continuous or _________?\",\n    \"answer\": \"particulate\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Put an unlit incense stick in a _________ of your class.\",\n    \"answer\": \"corner\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Now light the incense stick. What happens? Do you get the smell sitting at a _________?\",\n    \"answer\": \"distance\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Take two glasses/beakers filled with _________.\",\n    \"answer\": \"water\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Put a drop of blue or red ink slowly and carefully along the sides of the first beaker and _________ in the same way in the second beaker.\",\n    \"answer\": \"honey\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Leave them undisturbed in your house or in a _________ of the class.\",\n    \"answer\": \"corner\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"How many hours or days does it take for the colour of ink to spread evenly throughout the _________?\",\n    \"answer\": \"water\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Drop a crystal of copper sulphate or potassium permanganate into a glass of hot water and another containing _________ water.\",\n    \"answer\": \"cold\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Do not _________ the solution.\",\n    \"answer\": \"stir\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Allow the crystals to settle at the _________.\",\n    \"answer\": \"bottom\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"From the above three activities (1.3, 1.4 and 1.5), we can conclude the _________.\",\n    \"answer\": \"following\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Estimating how small are the particles of matter. With every dilution, though the colour becomes light, it is still _________.\",\n    \"answer\": \"visible\",\n    \"figure_reference\": \"Fig. 1.2\",\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"to convert a temperature on the Celsius scale to the Kelvin scale you have to add _________ to the given temperature.\",\n    \"answer\": \"273\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"So, we infer that the state of matter can be changed into another state by changing the _________.\",\n    \"answer\": \"temperature\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"We have learnt that substances around us change state from solid to liquid and from liquid to gas on application of _________.\",\n    \"answer\": \"heat\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"There are some that change directly from solid state to gaseous state and vice versa without changing into the _________ state.\",\n    \"answer\": \"liquid\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Take some camphor. Crush it and put it in a _________ dish.\",\n    \"answer\": \"china\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Put an inverted funnel over the _________ dish.\",\n    \"answer\": \"china\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Put a cotton plug on the stem of the funnel, as shown in _________.\",\n    \"answer\": \"Fig. 1.7\",\n    \"figure_reference\": \"Fig. 1.7\",\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Now, heat slowly and _________.\",\n    \"answer\": \"observe\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"A change of state directly from solid to gas without changing into liquid state is called _________ and the direct change of gas to solid without changing into liquid is called deposition.\",\n    \"answer\": \"sublimation\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"A change of state directly from solid to gas without changing into liquid state is called sublimation and the direct change of gas to solid without changing into liquid is called _________.\",\n    \"answer\": \"deposition\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"We have already learnt that the difference in various states of matter is due to the difference in the distances between the _________ particles.\",\n    \"answer\": \"constituent\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"on decrease of pressure to _________* without coming into liquid state.\",\n    \"answer\": \"1 atmosphere\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"This is the reason that solid carbon dioxide is also known as _________.\",\n    \"answer\": \"dry ice\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Thus, we can say that pressure and _________ determine the state of a substance, whether it will be solid, liquid or gas.\",\n    \"answer\": \"temperature\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Thus, we can say that pressure and temperature determine the state of a substance, whether it will be solid, liquid or _________.\",\n    \"answer\": \"gas\",\n    \"figure_reference\": null,\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"_________ : Interconversion of the three states of matter.\",\n    \"answer\": \"Fig. 1.9\",\n    \"figure_reference\": \"Fig. 1.9\",\n    \"marks\": 1,\n    \"difficulty\": \"easy\"\n  }\n]"
+            },
             {
-              "name": "Example Notes",
+              "name": "only_short_question output format",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/generate/notes?session_id={{sessionId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["generate", "notes"],
-                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
-                }
+                "url": "{{baseUrl}}/generate/only_short_question?session_id={{sessionId}}"
               },
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
               "header": [
-                { "key": "Content-Type", "value": "application/json" }
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
               "cookie": [],
-              "body": "{\n    \"title\": \"Matter in Our Surroundings\",\n    \"small_description\": \"Detailed notes on states of matter.\",\n    \"notes\": [\n        {\n            \"heading\": \"States of Matter\",\n            \"points\": [\n                \"Solids have fixed shape\",\n                \"Liquids have fixed volume\",\n                \"Gases are highly compressible\"\n            ]\n        }\n    ]\n}"
-            }
-          ]
-        },
-        {
-          "name": "Generate Worksheet",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/generate/worksheet?session_id={{sessionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["generate", "worksheet"],
-              "query": [
-                {
-                  "key": "session_id",
-                  "value": "{{sessionId}}"
-                }
-              ]
-            }
-          },
-          "response": [
+              "body": "[\n  {\n    \"question\": \"What is evaporation, and why is it considered a surface phenomenon?\",\n    \"answer\": \"Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"medium\"\n  },\n  {\n    \"question\": \"List the factors that influence the rate of evaporation.\",\n    \"answer\": \"The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What effect does evaporation have on its surroundings?\",\n    \"answer\": \"Evaporation causes cooling.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Define latent heat of vaporisation.\",\n    \"answer\": \"Latent heat of vaporisation is the heat energy required to change 1 kg of a liquid to gas at atmospheric pressure at its boiling point.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is meant by latent heat of fusion?\",\n    \"answer\": \"Latent heat of fusion is the amount of heat energy required to change 1 kg of solid into liquid at its melting point.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Describe the arrangement of particles in solids.\",\n    \"answer\": \"The arrangement of particles is most ordered in the case of solids\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"How do particles behave in the liquid state?\",\n    \"answer\": \"in the case of liquids layers of particles can slip and slide over each other\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Characterize the movement and order of particles in gases.\",\n    \"answer\": \"for gases, there is no order, particles just move about randomly.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Are the states of matter inter-convertible?\",\n    \"answer\": \"The states of matter are inter-convertible.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"How can the state of matter be changed?\",\n    \"answer\": \"The state of matter can be changed by changing temperature or pressure.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Define sublimation.\",\n    \"answer\": \"Sublimation is the change of solid state directly to gaseous state without going through liquid state.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is deposition in the context of states of matter?\",\n    \"answer\": \"Deposition is the change of gaseous state directly to solid state without going through liquid state.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Explain why boiling is considered a bulk phenomenon.\",\n    \"answer\": \"Boiling is a bulk phenomenon. Particles from the bulk (whole) of the liquid change into vapour state.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"medium\"\n  },\n  {\n    \"question\": \"What happens to the kinetic energy of particles in solids when their temperature is increased?\",\n    \"answer\": \"On increasing the temperature of solids, the kinetic energy of the particles increases.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Define the melting point of a solid.\",\n    \"answer\": \"The minimum temperature at which a solid melts to become a liquid at the atmospheric pressure is called its melting point.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What does the melting point of a solid indicate?\",\n    \"answer\": \"The melting point of a solid is an indication of the strength of the force of attraction between its particles.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"In what three states of matter can water exist?\",\n    \"answer\": \"water can exist in three states of matter– • solid, as ice, • liquid, as the familiar water, and • gas, as water vapour.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What is matter according to scientists?\",\n    \"answer\": \"Everything in this universe is made up of material which scientists have named “matter”.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What are the two fundamental properties of matter?\",\n    \"answer\": \"occupy space and have mass.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"According to early Indian philosophers, how was matter classified?\",\n    \"answer\": \"Early Indian philosophers classified matter in the form of five basic elements — the “Panch Tatva” — air, earth, fire, sky and water.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Describe the shape and volume characteristics of liquids.\",\n    \"answer\": \"liquids have no fixed shape but have a fixed volume.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Why are liquids considered fluid and not rigid?\",\n    \"answer\": \"Liquids flow and change shape, so they are not rigid but can be called fluid.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"medium\"\n  },\n  {\n    \"question\": \"Which states of matter can diffuse into liquids?\",\n    \"answer\": \"solids, liquids and gases can diffuse into liquids.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"Compare the rate of diffusion of liquids with that of solids.\",\n    \"answer\": \"The rate of diffusion of liquids is higher than that of solids.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  },\n  {\n    \"question\": \"What effect does a gas have on the walls of its container?\",\n    \"answer\": \"A gas exerts pressure on the walls of the container.\",\n    \"figure_reference\": null,\n    \"marks\": 2,\n    \"difficulty\": \"easy\"\n  }\n]"
+            },
             {
-              "name": "Example Worksheet",
+              "name": "only_long_question output format",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/generate/worksheet?session_id={{sessionId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["generate", "worksheet"],
-                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
-                }
+                "url": "{{baseUrl}}/generate/only_long_question?session_id={{sessionId}}"
               },
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
               "header": [
-                { "key": "Content-Type", "value": "application/json" }
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
               "cookie": [],
-              "body": "{\n    \"title\": \"Matter in Our Surroundings - Worksheet\",\n    \"fill_in_the_blanks\": [\n        {\"question\": \"The SI unit of volume is ________.\", \"answer\": \"cubic metre\"}\n    ],\n    \"true_false\": [\n        {\"question\": \"Matter is made up of particles.\", \"answer\": \"True\"}\n    ],\n    \"match_the_following\": [\n        {\"column_A\": \"Solid\", \"column_B\": \"Fixed shape\", \"match\": \"A-B\"}\n    ]\n}"
-            }
-          ]
-        },
-        {
-          "name": "Generate Lesson Plan",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/generate/lesson_plan?session_id={{sessionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["generate", "lesson_plan"],
-              "query": [
-                {
-                  "key": "session_id",
-                  "value": "{{sessionId}}"
-                }
-              ]
-            }
-          },
-          "response": [
+              "body": "[\n  {\n    \"question\": \"Explain the concept in detail.\",\n    \"answer\": \"Detailed model answer.\",\n    \"figure_reference\": null,\n    \"marks\": 5,\n    \"difficulty\": \"medium\"\n  }\n]"
+            },
             {
-              "name": "Example Lesson Plan",
+              "name": "only_case_base output format",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/generate/lesson_plan?session_id={{sessionId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["generate", "lesson_plan"],
-                  "query": [{ "key": "session_id", "value": "{{sessionId}}" }]
-                }
+                "url": "{{baseUrl}}/generate/only_case_base?session_id={{sessionId}}"
               },
               "status": "OK",
               "code": 200,
               "_postman_previewlanguage": "json",
               "header": [
-                { "key": "Content-Type", "value": "application/json" }
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
               ],
               "cookie": [],
-              "body": "{\n    \"learning_objectives\": [\"Understand the physical nature of matter\"],\n    \"teaching_steps\": [\"Introduce matter through day-to-day examples\"],\n    \"assessment\": [\"Define matter\"]\n}"
+              "body": "[\n  {\n    \"case_title\": \"Properties of Matter: Particle Size and Dilution\",\n    \"context\": \"Fig. 1.2: Estimating how small are the particles of matter. With every dilution, though the colour becomes light, it is still visible. This experiment shows that just a few crystals of potassium permanganate can colour a large volume of water (about 1000 L). So we conclude that there must be millions of tiny particles in just one crystal of potassium permanganate, which keep on dividing themselves into smaller and smaller particles. The same activity can be done using 2 mL of Dettol instead of potassium permanganate. The smell can be detected even on repeated dilution. The particles of matter are very small – they are small beyond our imagination!!!!\",\n    \"sub_questions\": [\n      {\n        \"question\": \"What conclusion can be drawn about the number of particles in one crystal of potassium permanganate based on the experiment?\",\n        \"answer\": \"There must be millions of tiny particles in just one crystal of potassium permanganate.\",\n        \"figure_reference\": \"Fig. 1.2\",\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n      },\n      {\n        \"question\": \"What alternative substance, besides potassium permanganate, can be used to demonstrate the smallness of particles through repeated dilution?\",\n        \"answer\": \"2 mL of Dettol.\",\n        \"figure_reference\": null,\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n      },\n      {\n        \"question\": \"Describe the observation made regarding the colour of potassium permanganate solution with every dilution.\",\n        \"answer\": \"With every dilution, though the colour becomes light, it is still visible.\",\n        \"figure_reference\": \"Fig. 1.2\",\n        \"marks\": 2,\n        \"difficulty\": \"medium\"\n      },\n      {\n        \"question\": \"Explain how the experiment with potassium permanganate supports the idea that particles of matter are very small.\",\n        \"answer\": \"This experiment shows that just a few crystals of potassium permanganate can colour a large volume of water (about 1000 L). So we conclude that there must be millions of tiny particles in just one crystal of potassium permanganate, which keep on dividing themselves into smaller and smaller particles.\",\n        \"figure_reference\": \"Fig. 1.2\",\n        \"marks\": 3,\n        \"difficulty\": \"hard\"\n      }\n    ]\n  },\n  {\n    \"case_title\": \"Phase Changes: Evaporation and Boiling\",\n    \"context\": \"This phenomenon of change of liquid into vapours at any temperature below its boiling point is called evaporation. Evaporation is a surface phenomenon. Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state. The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed. Evaporation causes cooling. Boiling is a bulk phenomenon. Particles from the bulk (whole) of the liquid change into vapour state.\",\n    \"sub_questions\": [\n      {\n        \"question\": \"Define evaporation.\",\n        \"answer\": \"This phenomenon of change of liquid into vapours at any temperature below its boiling point is called evaporation.\",\n        \"figure_reference\": null,\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n      },\n      {\n        \"question\": \"What kind of phenomenon is boiling?\",\n        \"answer\": \"Boiling is a bulk phenomenon.\",\n        \"figure_reference\": null,\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n      },\n      {\n        \"question\": \"Explain why evaporation is considered a surface phenomenon.\",\n        \"answer\": \"Particles from the surface gain enough energy to overcome the forces of attraction present in the liquid and change into the vapour state.\",\n        \"figure_reference\": null,\n        \"marks\": 2,\n        \"difficulty\": \"medium\"\n      },\n      {\n        \"question\": \"List the factors upon which the rate of evaporation depends.\",\n        \"answer\": \"The rate of evaporation depends upon the surface area exposed to the atmosphere, the temperature, the humidity and the wind speed.\",\n        \"figure_reference\": null,\n        \"marks\": 3,\n        \"difficulty\": \"hard\"\n      },\n      {\n        \"question\": \"What effect does evaporation have on temperature?\",\n        \"answer\": \"Evaporation causes cooling.\",\n        \"figure_reference\": null,\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n      }\n    ]\n  },\n  {\n    \"case_title\": \"Direct Phase Changes: Sublimation and Deposition\",\n    \"context\": \"Sublimation is the change of solid state directly to gaseous state without going through liquid state. Deposition is the change of gaseous state directly to solid state without going through liquid state.\",\n    \"sub_questions\": [\n      {\n        \"question\": \"What is sublimation?\",\n        \"answer\": \"Sublimation is the change of solid state directly to gaseous state without going through liquid state.\",\n        \"figure_reference\": null,\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n      },\n      {\n        \"question\": \"What is deposition?\",\n        \"answer\": \"Deposition is the change of gaseous state directly to solid state without going through liquid state.\",\n        \"figure_reference\": null,\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n      },\n      {\n        \"question\": \"How do sublimation and deposition differ from typical phase changes involving a liquid state?\",\n        \"answer\": \"Sublimation is the change of solid state directly to gaseous state without going through liquid state. Deposition is the change of gaseous state directly to solid state without going through liquid state.\",\n        \"figure_reference\": null,\n        \"marks\": 2,\n        \"difficulty\": \"medium\"\n      }\n    ]\n  },\n  {\n    \"case_title\": \"Effect of Temperature on Particles in Solids\",\n    \"context\": \"On increasing the temperature of solids, the kinetic energy of the particles increases. Due to the increase in kinetic energy, the particles start vibrating with greater speed. The energy supplied by heat overcomes the forces of attraction between the particles. The particles leave their fixed positions and start\",\n    \"sub_questions\": [\n      {\n        \"question\": \"What happens to the kinetic energy of particles when the temperature of solids is increased?\",\n        \"answer\": \"On increasing the temperature of solids, the kinetic energy of the particles increases.\",\n        \"figure_reference\": null,\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n      },\n      {\n        \"question\": \"Describe the movement of particles in a solid when its temperature is increased.\",\n        \"answer\": \"Due to the increase in kinetic energy, the particles start vibrating with greater speed.\",\n        \"figure_reference\": null,\n        \"marks\": 2,\n        \"difficulty\": \"medium\"\n      },\n      {\n        \"question\": \"How does the energy supplied by heat affect the forces of attraction between particles in a solid?\",\n        \"answer\": \"The energy supplied by heat overcomes the forces of attraction between the particles.\",\n        \"figure_reference\": null,\n        \"marks\": 3,\n        \"difficulty\": \"hard\"\n      }\n    ]\n  },\n  {\n    \"case_title\": \"Pressure Exerted by Gas Particles\",\n    \"context\": \"Particles just move about randomly. Due to this random movement, the particles hit each other and also the walls of the container. The pressure exerted by the gas is because of this force exerted by gas particles per unit area on the walls of the container.\",\n    \"sub_questions\": [\n      {\n        \"question\": \"How do gas particles move?\",\n        \"answer\": \"Particles just move about randomly.\",\n        \"figure_reference\": null,\n        \"marks\": 1,\n        \"difficulty\": \"easy\"\n      },\n      {\n        \"question\": \"What causes the pressure exerted by a gas?\",\n        \"answer\": \"The pressure exerted by the gas is because of this force exerted by gas particles per unit area on the walls of the container.\",\n        \"figure_reference\": null,\n        \"marks\": 2,\n        \"difficulty\": \"medium\"\n      },\n      {\n        \"question\": \"Describe the interaction of gas particles that leads to the exertion of pressure.\",\n        \"answer\": \"Due to this random movement, the particles hit each other and also the walls of the container. The pressure exerted by the gas is because of this force exerted by gas particles per unit area on the walls of the container.\",\n        \"figure_reference\": null,\n        \"marks\": 3,\n        \"difficulty\": \"hard\"\n      }\n    ]\n  }\n]"
+            },
+            {
+              "name": "summary output format",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": "{{baseUrl}}/generate/summary?session_id={{sessionId}}"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"summary\": \"Concise chapter summary.\",\n  \"key_points\": [\n    \"Point 1\",\n    \"Point 2\"\n  ]\n}"
+            },
+            {
+              "name": "notes output format",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": "{{baseUrl}}/generate/notes?session_id={{sessionId}}"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"notes\": [\n    {\n      \"topic\": \"Topic 1\",\n      \"points\": [\n        \"Bullet 1\",\n        \"Bullet 2\"\n      ]\n    }\n  ]\n}"
+            },
+            {
+              "name": "worksheet output format",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": "{{baseUrl}}/generate/worksheet?session_id={{sessionId}}"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"fill_in_the_blanks\": [\n    {\n      \"question\": \"Everything in this universe is made up of material which scientists have named \\\"_______\\\".\"\n    },\n    {\n      \"question\": \"All the things mentioned above occupy _______ and have _______.\"\n    },\n    {\n      \"question\": \"Early Indian philosophers classified matter in the form of five basic elements — the \\\"_______\\\" — air, earth, fire, sky and water.\"\n    },\n    {\n      \"question\": \"Modern day scientists have evolved two types of classification of matter based on their _______ properties and _______ nature.\"\n    },\n    {\n      \"question\": \"Due to its high compressibility, large volumes of a gas can be compressed into a _______ cylinder and transported easily.\"\n    },\n    {\n      \"question\": \"The arrangement of particles is most ordered in the case of _______.\"\n    },\n    {\n      \"question\": \"_______ is the change of solid state directly to gaseous state without going through liquid state.\"\n    }\n  ],\n  \"true_false\": [\n    {\n      \"statement\": \"Everything in this universe is made up of material which scientists have named 'matter'.\"\n    },\n    {\n      \"statement\": \"Early Indian philosophers classified matter into three basic elements.\"\n    },\n    {\n      \"statement\": \"Modern day scientists classify matter based only on its physical properties.\"\n    },\n    {\n      \"statement\": \"Compressed natural gas (CNG) is used as fuel in vehicles due to its high compressibility.\"\n    },\n    {\n      \"statement\": \"In the gaseous state, the particles move about randomly at high speed.\"\n    },\n    {\n      \"statement\": \"The arrangement of particles is most ordered in the case of liquids.\"\n    },\n    {\n      \"statement\": \"Deposition is the change of gaseous state directly to solid state.\"\n    }\n  ],\n  \"match_the_following\": [\n    {\n      \"column_A\": \"Matter\",\n      \"column_B\": \"Occupies space and has mass\"\n    },\n    {\n      \"column_A\": \"Panch Tatva\",\n      \"column_B\": \"Air, earth, fire, sky, water\"\n    },\n    {\n      \"column_A\": \"CNG\",\n      \"column_B\": \"Used as fuel due to high compressibility\"\n    },\n    {\n      \"column_A\": \"Sublimation\",\n      \"column_B\": \"Solid state directly to gaseous state\"\n    },\n    {\n      \"column_A\": \"Solids\",\n      \"column_B\": \"Most ordered particle arrangement\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "lesson_plan output format",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": "{{baseUrl}}/generate/lesson_plan?session_id={{sessionId}}"
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"title\": \"Lesson Plan\",\n  \"duration\": \"45 min\",\n  \"objectives\": [\n    \"Objective 1\"\n  ],\n  \"activities\": [\n    \"Activity 1\"\n  ],\n  \"assessment\": [\n    \"Question 1\"\n  ]\n}"
             }
           ]
         }
@@ -516,13 +399,23 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8000",
-      "type": "string"
+      "value": "http://127.0.0.1:8000"
     },
     {
       "key": "sessionId",
-      "value": "",
-      "type": "string"
+      "value": ""
+    },
+    {
+      "key": "chapterName",
+      "value": "Chapter 1"
+    },
+    {
+      "key": "language",
+      "value": "auto"
+    },
+    {
+      "key": "questionType",
+      "value": "only_mcq"
     }
   ]
 }

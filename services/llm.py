@@ -8,10 +8,11 @@ from utils.errors import classify_gemini_error, APIError, ErrorCode
 load_dotenv()
 logger = logging.getLogger(__name__)
 
+llm_model = "gemini-2.5-flash-lite"
 
-def get_llm(temperature=0.3, top_p=0.9, max_tokens=8000):
+def get_llm(temperature=0.3, top_p=0.9, max_tokens=10000):
     return ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash",
+        model=llm_model,
         temperature=temperature,
         max_tokens=max_tokens,
         top_p=top_p,
@@ -22,7 +23,7 @@ def get_llm(temperature=0.3, top_p=0.9, max_tokens=8000):
 
 def get_llm_for_mindmap():
     return ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash",
+        model=llm_model,
         temperature=0.0,
         top_p=0.1,
         max_tokens=2000,

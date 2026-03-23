@@ -1,612 +1,3 @@
-# SUMMARY_PROMPT = """You are an NCERT textbook summarizer for students.
-
-# RULES (STRICT):
-# - Use ONLY information present in the given text
-# - Do NOT add new facts, examples, or explanations
-# - Keep language simple and textbook-level
-# - Paraphrasing is allowed only to shorten content
-# - Do NOT use bullet symbols or numbering
-# - JSON output ONLY
-
-# SUMMARY RULES:
-# - Each summary point must be one clear sentence
-# - Focus on definitions, processes, and key ideas
-# - Avoid opinions or interpretations
-
-# OUTPUT JSON FORMAT (STRICT):
-# {{
-#   "summary": [""]
-# }}
-
-# Text:
-# {context}
-# """
-
-# NOTES_PROMPT = """Create NCERT-based student notes for classroom study.
-
-# RULES (STRICT):
-# - Use ONLY information present in the given text
-# - Do NOT introduce new terminology or examples
-# - Language must match NCERT textbook tone
-# - Paraphrasing is allowed only to simplify sentences
-# - JSON output ONLY
-
-# NOTES STRUCTURE:
-# - Each heading represents a main concept
-# - Points must be short, clear, and factual
-# - No extra explanation beyond textbook meaning
-
-# OUTPUT JSON FORMAT (STRICT):
-# {{
-#   "title":"",
-#   "small_description":"",
-#   "notes": [
-#     {{
-#       "heading": "",
-#       "points": [""]
-#     }}
-#   ]
-# }}
-
-# Text:
-# {context}
-# """
-
-# MINDMAP_PROMPT = """
-# You are an NCERT curriculum expert and diagram generator.
-# Your task is to create a Mermaid mind map using ONLY the official Mermaid mindmap syntax.
-
-# STRICT RULES (VERY IMPORTANT):
-
-# CONTENT RULES
-# - Use ONLY concepts that appear in the given text
-# - Do NOT introduce new concepts, relationships, or examples
-# - Use textbook terminology only
-# - Do NOT explain anything
-# - Do NOT summarize
-# - Only extract hierarchy
-
-# STRUCTURE RULES
-# - Root must be the chapter/topic
-# - Level 1 = main concepts
-# - Level 2 = related terms or processes
-# - Maximum depth = 3 levels
-# - Keep hierarchy simple and readable
-
-# MERMAID SYNTAX RULES
-# - Output MUST start with: mindmap
-# - Use indentation to define hierarchy
-# - Do NOT output JSON
-# - Do NOT output markdown
-# - Do NOT add comments
-# - Do NOT add explanations
-
-# ALLOWED NODE SHAPES (USE ONLY THESE)
-# Root:
-#   root((Chapter Topic))
-
-# Main concepts:
-#   (Concept)
-
-# Subtopics:
-#   [Subtopic]
-
-# DO NOT use:
-# - icons
-# - class definitions
-# - custom styling
-# - Mermaid config blocks
-# - unsupported shapes
-
-# VALID EXAMPLE FORMAT (FOLLOW EXACTLY):
-
-# mindmap
-#   root((Matter in Our Surroundings))
-#     (Matter)
-#       [Particles]
-#       [States of matter]
-#     (Properties)
-#       [Mass]
-#       [Volume]
-
-# OUTPUT RULES
-# - Output ONLY the Mermaid code
-# - No markdown code blocks
-# - No extra text
-# - No explanations
-
-# Text:
-# {context}
-# """
-
-# LESSON_PLAN_PROMPT = """Create an NCERT-based lesson plan for classroom teaching.
-
-# RULES (STRICT):
-# - Use ONLY information present in the given text
-# - Do NOT add external activities or examples
-# - Teaching steps must follow the order of concepts as they appear in the chapter text.
-# - Focus on teacher delivery and student understanding
-# - Language must be clear and instructional
-# - JSON output ONLY
-
-# LESSON PLAN STRUCTURE:
-# - Learning objectives: what students should understand
-# - Teaching steps: logical flow of concepts from the text
-# - Assessment: simple oral or written checks based on the text.
-
-# OUTPUT JSON FORMAT (STRICT):
-# {{
-#   "learning_objectives": [""],
-#   "teaching_steps": [""],
-#   "assessment": [""]
-# }}
-
-# Text:
-# {context}
-# """
-
-# # - Do NOT include answers
-# WORKSHEET_PROMPT = """You are an NCERT worksheet creator for classroom teaching.
-
-# RULES (STRICT):
-# - Use ONLY information present in the given text
-# - Do NOT introduce new facts, examples, or terminology
-# - Language must be NCERT textbook level (simple and clear)
-# - Paraphrasing is allowed ONLY to form questions
-# - Do NOT refer to figure numbers (Fig., Figure 1.1, etc.)
-# - Questions must be answerable without seeing any image
-# - JSON output ONLY
-
-# QUESTION DISTRIBUTION RULE:
-# - Generate questions covering ALL concepts
-# - Each concept should produce at least one question
-
-
-# WORKSHEET STRUCTURE:
-# - Fill in the Blanks: key terms or concepts
-# - True / False: clear factual statements
-# - Match the Following: terms with correct descriptions
-
-# OUTPUT JSON FORMAT (STRICT):
-# {{
-#   "title": "",
-#   "fill_in_the_blanks": [
-#     {{ "question": "", "answer":"" }}
-#   ],
-#   "true_false": [
-#     {{ "statement": "", "answer":"" }}
-#   ],
-#   "match_the_following": [
-#     {{ "column_A": "", "column_B": "", "match":"" }}
-#   ]
-# }}
-
-# Text:
-# {context}
-# """
-
-
-# QUESTION_PAPER_PROMPT ="""
-# You are a CBSE/NCERT exam paper setter.
-# DIFFICULTY RULES (STRICT):
-# - easy: direct definition, one-line fact, naming
-# - medium: explanation using 2-3 sentences from text
-# - hard: reasoning or comparison explicitly present in text
-
-# ABSOLUTE RULES (NO EXCEPTIONS):
-# - Use ONLY exact words, phrases, or sentences copied from the Chapter Text
-# - Do NOT paraphrase
-# - Do NOT summarize
-# - Do NOT introduce synonyms
-# - Do NOT use prior knowledge
-# - If an answer sentence is not present verbatim, DO NOT generate the question
-# - Match the marks blueprint EXACTLY
-# - Follow question counts EXACTLY
-# - JSON output ONLY
-# - NO extra keys
-# - NO wrapper objects
-# - NO comments
-# - NO trailing commas
-# - NO markdown
-
-# MATH / FORMULA RULES:
-# - For mathematics, represent equations using LaTeX
-# - LaTeX MUST be compatible with KaTeX
-# - Do NOT invent formulas
-# - Use ONLY formulas present in the text
-# - If the text contains [FORMULA]...[/FORMULA] tags, copy the formula content EXACTLY as-is
-# - Use standard JSON string escaping: one backslash becomes two in JSON (e.g. \\frac not \\\\frac)
-# - For inline math use $...$ and for display math use $$...$$
-
-# FIGURE HANDLING (MANDATORY):
-# - If a question refers to any diagram, experiment, or illustration:
-#   - Set "figure_reference": "Fig. X"
-# - If figure number is mentioned in text, copy it exactly
-# - If no figure is referenced, set null
-
-# QUESTION TYPE RULES:
-
-# MCQ:
-# - Exactly 4 options
-# - The correct option MUST exist verbatim in the text.
-# - Distractors may be short phrases derived from the same sentence but must not introduce new knowledge.
-# - One and only one correct option
-# - Provide "correct_index"
-# - All keys MUST be quoted using double quotes.
-
-# Fill in the blanks:
-# - Remove EXACTLY ONE word or phrase
-# - The removed text must exist verbatim in the chapter
-# - All keys MUST be quoted using double quotes.
-
-# Short / Long Answer:
-# - Question sentence MUST match one of these patterns AND exist in text:
-#   - "Define ..."
-#   - "What is ..."
-#   - "Explain ..."
-#   - "Write ..."
-#   - "Name ..."
-# - Answer MUST be copied verbatim from the chapter text
-# - If figure is referenced in question, set "figure_reference" in json directly,
-# - Multi-sentence answers must preserve original order
-
-# MARKS BLUEPRINT (STRICT):
-# {marks_json}
-
-# OUTPUT JSON FORMAT (STRICT — DO NOT CHANGE):
-# {{
-#   "mcq": [
-#     {{
-#       "question": "",
-#       "options": ["", "", "", ""],
-#       "correct_index": 0,
-#       "marks": 1,
-#       "difficulty": "easy"
-#     }}
-#   ],
-#   "fill_in_the_blanks": [
-#     {{
-#       "question": "",
-#       "answer": "",
-#       "marks": 1,
-#       "difficulty": "easy"
-#     }}
-#   ],
-#   "short_question": [
-#     {{
-#       "question": "",
-#       "answer": "",
-#       "figure_reference": null,
-#       "marks": 1,
-#       "difficulty": "easy"
-#     }}
-#   ],
-#   "long_question": [
-#     {{
-#       "question": "",
-#       "answer": "",
-#       "figure_reference": null,
-#       "marks": 1,
-#       "difficulty": "easy"
-#     }}
-#   ]
-# }}
-
-# Chapter Text:
-# {context}
-# """
-
-# ANSWER_KEY_PROMPT = """You are an exam evaluator.
-# Generate a professional answer key for the provided question paper using the context.
-
-# QUESTION PAPER:
-# {paper_json}
-
-# CONTEXT:
-# {context}
-
-# STRICT RULES:
-# - Provide answers for EVERY question in the question paper.
-# - JSON ONLY.
-# - Answers must be accurate and derived ONLY from the context.
-
-# JSON FORMAT:
-# {{
-#   "answers": [
-#     {{
-#       "question": "",
-#       "answer": "",
-#       "marks": 0
-#     }}
-#   ]
-# }}
-# """
-
-
-# COMMON_RULES = """
-# DIFFICULTY RULES (STRICT):
-# - easy: direct definition, one-line fact, or naming from the text
-# - medium: explanation requiring 2-3 related sentences from the text
-# - hard: reasoning or comparison explicitly stated in the text
-
-# ABSOLUTE CONTEXT RULES (NO EXCEPTIONS):
-# - Use ONLY information present in the provided Chapter Text
-# - Do NOT introduce outside knowledge
-# - Do NOT use prior knowledge
-# - Do NOT invent examples, explanations, or relationships
-# - If the required answer sentence is not present in the Chapter Text, DO NOT generate the question
-# - Prefer copying phrases or sentences exactly from the Chapter Text whenever possible
-
-# TEXT FIDELITY RULES:
-# - Do NOT paraphrase definitions
-# - Do NOT summarize content
-# - Do NOT introduce synonyms for key terms
-# - Preserve scientific terms exactly as written in the Chapter Text
-# - Preserve capitalization of key terms if present in the text
-
-# QUESTION SAFETY RULES:
-# - Questions must be directly supported by the Chapter Text
-# - Each question must be answerable using the Chapter Text alone
-# - Do NOT generate duplicate questions
-# - Avoid trivial repetition of the same concept
-
-# FIGURE HANDLING (MANDATORY):
-# - If a question refers to any diagram, experiment, or illustration:
-#   - Set "figure_reference": "Fig. X"
-# - If the figure number appears in the text, copy it exactly
-# - If no figure is referenced, set "figure_reference": null
-
-# STEM SAFETY RULES (MANDATORY):
-# - All mathematical expressions MUST be written in LaTeX
-# - LaTeX MUST be compatible with KaTeX rendering
-# - LaTeX MUST appear inside JSON strings
-# - Do NOT introduce formulas not present in the Chapter Text
-# - Copy formulas exactly as written in the Chapter Text
-# - Preserve subscripts, superscripts, arrows, and units exactly
-# - If the Chapter Text contains [FORMULA]...[/FORMULA] tags, copy the formula content EXACTLY
-# - Use $...$ for inline math and $$...$$ for display math
-
-# KaTeX COMPATIBILITY (USE ONLY THESE):
-# - Fractions: \\frac{a}{b}
-# - Square root: \\sqrt{x}, \\sqrt[n]{x}
-# - Superscript: x^{2}, x^{n+1}
-# - Subscript: x_{1}, a_{n}
-# - Greek letters: \\alpha, \\beta, \\gamma, \\theta, \\lambda, \\mu, \\pi, \\sigma, \\omega
-# - Vectors: \\vec{F}, \\hat{i}
-# - Operators: \\times, \\div, \\pm, \\cdot, \\leq, \\geq, \\neq, \\approx
-# - Arrows: \\rightarrow, \\leftarrow, \\Rightarrow
-# - Functions: \\sin, \\cos, \\tan, \\log, \\ln
-# - Integrals/Sums: \\int, \\sum, \\prod, \\lim
-# - DO NOT USE: \\ce{} (mhchem), \\chemfig, \\tikz, \\cancel, environments like align* or equation*
-# - For chemical formulas use subscripts: H_2O not \\ce{H2O}
-
-# CONTEXT SAFETY RULE:
-# - If sufficient information is not present in the Chapter Text, return an empty JSON structure instead of guessing.
-
-# JSON OUTPUT RULES (STRICT):
-# - Output MUST be valid JSON
-# - JSON output ONLY
-# - NO markdown
-# - NO comments
-# - NO explanations
-# - NO wrapper objects unless explicitly required
-# - NO extra keys
-# - NO trailing commas
-# - Use standard JSON escaping for backslashes: \\frac is correct (NOT \\\\frac)
-# - Do NOT include unescaped newline characters inside JSON strings
-# - Use plain ASCII text outside LaTeX
-# """
-
-# MCQ_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
-# Generate only Multiple Choice Questions (MCQs) from the given text.
-# """ + COMMON_RULES + """
-# MCQ RULES:
-# - Exactly 4 options
-# - The correct option MUST exist verbatim in the text.
-# - Distractors may be short phrases derived from the same sentence but must not introduce new knowledge.
-# - One and only one correct option
-# - Provide "correct_index"
-# - Generate the maximum possible questions WITHOUT repeating concepts.
-
-# QUESTION DISTRIBUTION RULE:
-# - Generate questions covering ALL concepts
-# - Each concept should produce at least one question
-
-# OUTPUT JSON FORMAT (STRICT):
-# [
-#   {{
-#     "question": "",
-#     "options": ["", "", "", ""],
-#     "correct_index": 0 | 1 | 2 | 3,
-#     "marks": 1,
-#     "source_sentence":"",
-#     "difficulty": "easy"
-#   }}
-# ]
-
-# Chapter Text:
-# {context}
-# """
-
-# FILL_BLANK_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
-# Generate only Fill in the Blanks questions from the given chapter text.
-# """ + COMMON_RULES + """
-
-# FILL IN THE BLANKS RULES (STRICT):
-# - Remove EXACTLY ONE word or phrase from a meaningful sentence
-# - The removed word or phrase MUST exist verbatim in the chapter text
-# - The removed word or phrase MUST be a CONCEPT, TERM, or FACT — NOT a label
-
-# ABSOLUTELY FORBIDDEN (DO NOT USE):
-# - Figure numbers or references (e.g., Fig., Fig. 1.9, Figure 2.1)
-# - Image captions
-# - Diagram labels
-# - Table numbers
-# - Any sentence containing the words:
-#   "Fig.", "Figure", "diagram", "image", "shown", "illustrated", "table"
-
-# IMPORTANT:
-# - Do NOT generate questions derived from figure captions
-# - Do NOT remove or use figure references as answers
-# - If a sentence refers to a figure, SKIP that sentence entirely
-# - The blank must test conceptual understanding, not identification of figures
-# - Generate the maximum possible questions WITHOUT repeating concepts.
-
-# QUESTION DISTRIBUTION RULE:
-# - Generate questions covering ALL concepts
-# - Each concept should produce at least one question
-
-# QUESTION FORMAT:
-# - Replace the removed text with exactly "_________"
-# - The sentence must remain grammatically correct
-
-# OUTPUT JSON FORMAT (STRICT):
-# [
-#   {{
-#     "question": "",
-#     "answer": "",
-#     "marks": 1,
-#     "source_sentence":"",
-#     "difficulty": "easy"
-#   }}
-# ]
-
-# Chapter Text:
-# {context}
-# """
-
-# SHORT_QUESTION_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
-# Generate only Short Answer Questions from the given chapter text.
-# Generate the maximum possible questions WITHOUT repeating concepts.
-# """ + COMMON_RULES + """
-
-# SHORT ANSWER RULES (STRICT):
-# - Answers MUST be copied verbatim from the chapter text
-# - Questions should test understanding of concepts, processes, or observations
-
-# IMAGE / DIAGRAM HANDLING RULES:
-# - Questions MAY refer to an image or diagram INDIRECTLY
-#   (e.g., "the above diagram", "the given illustration", "the diagram shown")
-# - Questions MUST NOT mention:
-#   "Fig.", "Figure", figure numbers (e.g., 1.1, 2.3), or image labels
-# - Do NOT use exact figure captions as questions
-# - "figure_reference" in json directly
-
-# ANSWER RULES:
-# - Answers MUST NOT mention or depend on:
-#   "Fig.", "Figure", diagram numbers, or image labels
-# - Answers MUST be fully understandable without seeing the image
-# - Answers must be copied exactly from the chapter text (no paraphrasing)
-
-# QUESTION QUALITY RULES:
-# - Use NCERT-style phrasing:
-#   "What happens when…", "Why does…", "Explain how…", "What is observed when…"
-# - The image reference (if any) should only provide context, not essential data
-
-# QUESTION DISTRIBUTION RULE:
-# - Generate questions covering ALL concepts
-# - Each concept should produce at least one question
-
-# OUTPUT JSON FORMAT (STRICT):
-# [
-#   {{
-#     "question": "",
-#     "answer": "",
-#     "figure_reference": null,
-#     "marks": 2,
-#     "difficulty": "easy"
-#   }}
-# ]
-
-# Chapter Text:
-# {context}
-
-# IMPORTANT:
-# Return ONLY valid JSON.
-# Do NOT wrap JSON in markdown.
-# Do NOT add explanations.
-# Ensure the JSON array is complete and properly closed.
-
-# """
-
-# LONG_QUESTION_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
-# Generate only Long Answer Questions from the given text.
-# """ + COMMON_RULES + """
-# LONG ANSWER RULES:
-# - Answer MUST be copied verbatim from the chapter text
-# - Length should be a detailed explanation or multiple paragraphs.
-
-# QUESTION DISTRIBUTION RULE:
-# - Generate questions covering ALL concepts
-# - Each concept should produce at least one question
-
-# OUTPUT JSON FORMAT (STRICT):
-# [
-#   {{
-#     "question": "",
-#     "answer": "",
-#     "figure_reference": null,
-#     "marks": 5,
-#     "difficulty": "easy"
-#   }}
-# ]
-
-# Chapter Text:
-# {context}
-# """
-
-# CASE_BASE_ONLY_PROMPT = """You are a CBSE/NCERT exam paper setter.
-# Generate Case-based Questions from the given text. A case-based question includes a context (passage) followed by multiple sub-questions.
-# """ + COMMON_RULES + """
-
-# QUESTION DISTRIBUTION RULE:
-# - Generate questions covering ALL concepts
-# - Each concept should produce at least one question
-
-# OUTPUT JSON FORMAT (STRICT):
-# [
-#   {{
-#     "case_title": "",
-#     "context": "",
-#     "sub_questions": [
-#        {{
-#          "question": "",
-#          "answer": "",
-#          "figure_reference": null,
-#          "marks": 1,
-#          "difficulty": "easy"
-#        }}
-#     ]
-#   }}
-# ]
-
-# Chapter Text:
-# {context}
-# """
-
-# CONCEPT_EXTRACTION_PROMPT = """
-# You are an NCERT textbook analyzer.
-
-# Extract the important concepts from the chapter text.
-
-# RULES:
-# - Use ONLY concepts present in the text
-# - Do NOT summarize
-# - Extract only core concepts
-# - Minimum 15 concepts
-# - Avoid duplicates
-
-# OUTPUT JSON FORMAT:
-# {{
-#   "concepts": [""]
-# }}
-
-# Text:
-# {context}
-# """
-
-
-
 """
 Refined prompt templates for NCERT/CBSE chapter workflows.
 
@@ -680,10 +71,8 @@ Text:
 
 
 MINDMAP_PROMPT = """You are an NCERT curriculum expert and Mermaid mindmap generator.
-
 TASK:
 Extract concept hierarchy from the text and output Mermaid mindmap code.
-
 CONTENT RULES (STRICT):
 - Use ONLY concepts present in the given text
 - Do NOT add external concepts, relations, or examples
@@ -691,12 +80,14 @@ CONTENT RULES (STRICT):
 - Extract hierarchy only
 - MULTILINGUAL SUPPORT: If the Chapter Text is in Devanagari (Hindi/Marathi), generate the mindmap labels in Devanagari (Hindi/Marathi).
 
-STRUCTURE RULES:
+STRUCTURE RULES (STRICT):
 - Root = chapter/topic
-- Level 1 = major concepts
-- Level 2 = key sub-concepts/processes
-- Maximum depth = 3 levels total
-- Keep tree readable and non-redundant
+- Level 1 = major concepts only
+- Level 2 = subtopics directly under Level 1
+- DO NOT create Level 3 under Level 2
+- ABSOLUTE MAX DEPTH = 3 (root included)
+- If a concept has deeper hierarchy, FLATTEN it to Level 2
+- Do NOT nest subtopics under subtopics
 
 MERMAID RULES (STRICT):
 - Output MUST start with: mindmap
@@ -719,6 +110,22 @@ mindmap
       [Mass]
       [Volume]
 
+INVALID EXAMPLE (DO NOT DO THIS):
+mindmap
+  root((Topic))
+    (Concept)
+      (Subconcept)
+        [Detail]   ❌ Too deep
+
+CORRECT VERSION:
+mindmap
+  root((Topic))
+    (Concept)
+      [Subconcept]
+      [Detail]
+
+- All leaf nodes MUST use [Subtopic]
+- Do NOT use ( ) beyond Level 1
 Text:
 {context}
 """
@@ -803,10 +210,26 @@ ABSOLUTE RULES:
 - Question stems may be lightly rephrased for grammar
 - Answers must remain text-faithful and context-supported
 - Match marks blueprint EXACTLY
-- Match required question counts EXACTLY
+- Match required question counts EXACTLY for: mcq, fill_in_the_blanks, short_question, long_question
 - JSON output ONLY
 - No extra keys, no comments, no markdown
 - MULTILINGUAL SUPPORT: If the Chapter Text is in Devanagari (Hindi/Marathi), generate the questions and answers in Devanagari (Hindi/Marathi) while maintaining the structural JSON format.
+
+CSV JSON ROW RULES:
+- Output MUST be a JSON array of flat row objects
+- Every row MUST contain ALL of these exact keys:
+  "Topics Name", "Subtopic Name", "Question Type", "Difficulty Level", "Question",
+  "sub question type", "sub question", "Question Image",
+  "Option A", "Option B", "Option C", "Option D", "Correct Option",
+  "Answer", "Explanation"
+- For non-applicable fields, use null (do not omit keys)
+- Do NOT add a marks field (not part of CSV columns)
+
+EXPLANATION FIELD RULES (TOKEN OPTIMIZATION):
+- Generate "Explanation" ONLY for rows where:
+  - "Question Type" is "mcq" or "fill_in_the_blank", OR
+  - "Question Type" is "case_base_question" and "sub question type" is "mcq" or "fill_in_the_blank"
+- For all other rows, set "Explanation": null
 
 MATH / FORMULA RULES:
 - Use KaTeX-compatible LaTeX for mathematical expressions
@@ -815,7 +238,7 @@ MATH / FORMULA RULES:
 - Use JSON-safe escaping for backslashes (example: \\\\frac)
 
 FIGURE HANDLING:
-- If a question depends on a diagram/illustration, set "figure_reference" accordingly
+- If a question depends on a diagram/illustration, set "Question Image" accordingly
 - If figure number exists in text, copy it exactly
 - If no figure dependency, set null
 
@@ -825,18 +248,46 @@ MCQ:
 - Exactly 4 options
 - Exactly one correct option
 - Correct option must be directly supported by text
-- Use "type" as either "single" or "multiple"
-- Use "correct_option_values" as a list of option values (example: ["A"] or ["A", "C"])
+- "Question Type" must be "mcq"
+- "sub question type" and "sub question" must be null
+- "Correct Option" must be one of: "A", "B", "C", "D"
+- "Answer" must contain the correct option text
+- "Explanation" must be one short context-supported reason
 
 Fill in the Blanks:
 - Remove exactly one key term/phrase supported by text
+- "Question Type" must be "fill_in_the_blank"
+- "sub question type" and "sub question" must be null
+- Options A-D and Correct Option must be null
+- "Explanation" must be one short context-supported reason
 
-Short / Long Answer:
+Short Answer:
 - Prefer NCERT stems: Define, What is, Explain, Write, Name
+- "Question Type" must be "short_question"
+- "sub question type" and "sub question" must be null
+- Options A-D and Correct Option must be null
+- "Explanation" must be null
+
+Long Answer:
+- Prefer NCERT stems: Define, What is, Explain, Write, Name
+- "Question Type" must be "long_question"
+- "sub question type" and "sub question" must be null
+- Options A-D and Correct Option must be null
+- "Explanation" must be null
+
+Case-based rows (optional, only if blueprint requires):
+- "Question Type" must be "case_base_question"
+- "Question" must contain case passage
+- "sub question type" must be one of: "mcq", "fill_in_the_blank", "short_question", "long_question"
+- "sub question" must contain the sub-question
+- If "sub question type" is "mcq", fill options and correct option
+- Else set options and correct option to null
+- If "sub question type" is "mcq" or "fill_in_the_blank", include short "Explanation"
+- Else set "Explanation" to null
 - Answers should be fully derivable from chapter text
 
 DIFFICULTY FIELD:
-- For every question item, "difficulty" must be one of: "easy", "medium", "hard"
+- For every row, "Difficulty Level" must be one of: "easy", "medium", "hard"
 - Assign difficulty by cognitive demand:
   - easy: direct recall/definition
   - medium: explanation with 2-3 linked facts
@@ -847,53 +298,43 @@ DIFFICULTY FIELD:
 MARKS BLUEPRINT (STRICT):
 {marks_json}
 
+BLUEPRINT INTERPRETATION RULES:
+- "mcq" -> rows with "Question Type": "mcq"
+- "fill_in_the_blanks" -> rows with "Question Type": "fill_in_the_blank"
+- "short_question" -> rows with "Question Type": "short_question"
+- "long_question" -> rows with "Question Type": "long_question"
+- "case_base_question" -> rows with "Question Type": "case_base_question"
+- For case-based rows, "marks_each" applies per case sub-question row.
+
+CASE-BASE POLICY (IMPORTANT):
+- If blueprint includes "case_base_question" with count > 0:
+  try to generate at least 1 valid case-based row.
+- If chapter context does not support a valid case-based row, return 0 case-based rows (remove case rows), do NOT hallucinate.
+- If blueprint does not include "case_base_question", do NOT generate any case-based rows.
+
 OUTPUT JSON FORMAT (STRICT):
-{{
-  "mcq": [
-    {{
-      "question": "",
-      "options": [
-        {{ "label": "Option A content", "value": "A" }},
-        {{ "label": "Option B content", "value": "B" }},
-        {{ "label": "Option C content", "value": "C" }},
-        {{ "label": "Option D content", "value": "D" }}
-      ],
-      "correct_option_values": ["A"],
-      "type": "single",
-      "marks": 1,
-      "difficulty": "easy"
-    }}
-  ],
-  "fill_in_the_blanks": [
-    {{
-      "question": "",
-      "answer": "",
-      "marks": 1,
-      "difficulty": "easy"
-    }}
-  ],
-  "short_question": [
-    {{
-      "question": "",
-      "answer": "",
-      "figure_reference": null,
-      "marks": 1,
-      "difficulty": "easy"
-    }}
-  ],
-  "long_question": [
-    {{
-      "question": "",
-      "answer": "",
-      "figure_reference": null,
-      "marks": 1,
-      "difficulty": "easy"
-    }}
-  ]
-}}
+[
+  {{
+    "Topics Name": "",
+    "Subtopic Name": null,
+    "Question Type": "mcq",
+    "Difficulty Level": "easy",
+    "Question": "",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "",
+    "Option B": "",
+    "Option C": "",
+    "Option D": "",
+    "Correct Option": "A",
+    "Answer": "",
+    "Explanation": ""
+  }}
+]
 
 FAILSAFE:
-- If blueprint cannot be satisfied from context, return same JSON structure with empty arrays.
+- If blueprint cannot be satisfied from context, return [].
 
 Chapter Text:
 {context}
@@ -949,10 +390,24 @@ TEXT FIDELITY RULES:
 - Do NOT alter meaning while simplifying language
 - Do NOT replace key terms with synonyms if term precision matters
 
-FIGURE RULES:
-- If a question depends on a figure/diagram/illustration, set "figure_reference"
-- If explicit figure label is present in text, copy it exactly
-- Otherwise set "figure_reference": null
+TOPIC / SUBTOPIC RULES:
+- Derive topic and subtopic only from chapter text
+- If not clearly available, set those fields to null
+
+CSV JSON ROW RULES:
+- Output MUST be a JSON array of flat row objects
+- Every row MUST contain ALL of these exact keys:
+  "Topics Name", "Subtopic Name", "Question Type", "Difficulty Level", "Question",
+  "sub question type", "sub question", "Question Image",
+  "Option A", "Option B", "Option C", "Option D", "Correct Option",
+  "Answer", "Explanation"
+- For non-applicable fields, use null (do not omit keys)
+
+EXPLANATION FIELD RULES (TOKEN OPTIMIZATION):
+- Generate "Explanation" ONLY for:
+  - "Question Type" = "mcq" or "fill_in_the_blank"
+  - OR "Question Type" = "case_base_question" with "sub question type" = "mcq" or "fill_in_the_blank"
+- For all other rows, set "Explanation": null
 
 MATH / LATEX RULES:
 - Use KaTeX-compatible LaTeX only
@@ -977,14 +432,13 @@ Generate ONLY Multiple Choice Questions (MCQs) from the chapter text.
 """ + COMMON_RULES + """
 MCQ RULES:
 - Exactly 4 options per question
-- "type" must be either "single" or "multiple"
 - Correct option must be directly supported by chapter text
-- Distractors must remain context-consistent (no outside facts)
-- "correct_option_values" must contain option values only (A/B/C/D)
-- If type is "single", include exactly one value in "correct_option_values"
-- If type is "multiple", include at least two values in "correct_option_values"
-- "difficulty" must be one of: "easy", "medium", "hard"
-- Generate maximum valid concept coverage without repetition
+- "Question Type" must be "mcq"
+- "sub question type" and "sub question" must be null
+- "Correct Option" must be one value from: "A", "B", "C", "D"
+- "Answer" must contain the correct option text (not the letter)
+- "Explanation" should justify why correct option is correct from chapter text
+- "Difficulty Level" must be one of: "easy", "medium", "hard"
 
 QUESTION DISTRIBUTION:
 - Cover all major concepts
@@ -993,18 +447,21 @@ QUESTION DISTRIBUTION:
 OUTPUT JSON FORMAT (STRICT):
 [
   {{
-    "question": "",
-    "type": "single",
-    "options": [
-      {{ "label": "Option A content", "value": "A" }},
-      {{ "label": "Option B content", "value": "B" }},
-      {{ "label": "Option C content", "value": "C" }},
-      {{ "label": "Option D content", "value": "D" }}
-    ],
-    "correct_option_values": ["A"],
-    "marks": 1,
-    "source_sentence": "",
-    "difficulty": "easy"
+    "Topics Name": "",
+    "Subtopic Name": null,
+    "Question Type": "mcq",
+    "Difficulty Level": "easy",
+    "Question": "",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": "",
+    "Option B": "",
+    "Option C": "",
+    "Option D": "",
+    "Correct Option": "A",
+    "Answer": "",
+    "Explanation": ""
   }}
 ]
 
@@ -1030,16 +487,30 @@ QUESTION FORMAT:
 - Replace removed segment with exactly "_________"
 - Keep sentence grammatically correct
 - Generate maximum concept coverage without repetition
-- "difficulty" must be one of: "easy", "medium", "hard"
+- "Question Type" must be "fill_in_the_blank"
+- "sub question type" and "sub question" must be null
+- Options and Correct Option must be null
+- "Explanation" should be one short context-supported reason
+- "Difficulty Level" must be one of: "easy", "medium", "hard"
 
 OUTPUT JSON FORMAT (STRICT):
 [
   {{
-    "question": "",
-    "answer": "",
-    "marks": 1,
-    "source_sentence": "",
-    "difficulty": "easy"
+    "Topics Name": "",
+    "Subtopic Name": null,
+    "Question Type": "fill_in_the_blank",
+    "Difficulty Level": "easy",
+    "Question": "",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "",
+    "Explanation": ""
   }}
 ]
 
@@ -1055,6 +526,10 @@ SHORT ANSWER RULES:
 - Questions should test understanding of concept/process/observation
 - Answers must be directly derivable from chapter text
 - Keep answers concise and textbook-faithful
+- "Question Type" must be "short_question"
+- "sub question type" and "sub question" must be null
+- Options and Correct Option must be null
+- "Explanation" must be null
 
 FIGURE HANDLING:
 - Questions may mention "given diagram/illustration" only when needed
@@ -1064,16 +539,26 @@ FIGURE HANDLING:
 QUESTION DISTRIBUTION:
 - Cover all major concepts
 - At least one question per major concept whenever possible
-- "difficulty" must be one of: "easy", "medium", "hard"
+- "Difficulty Level" must be one of: "easy", "medium", "hard"
 
 OUTPUT JSON FORMAT (STRICT):
 [
   {{
-    "question": "",
-    "answer": "",
-    "figure_reference": null,
-    "marks": 2,
-    "difficulty": "easy"
+    "Topics Name": "",
+    "Subtopic Name": null,
+    "Question Type": "short_question",
+    "Difficulty Level": "easy",
+    "Question": "",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "",
+    "Explanation": null
   }}
 ]
 
@@ -1091,20 +576,34 @@ LONG ANSWER RULES:
 - Questions should require connected multi-point explanation
 - Answers must be fully supported by chapter text
 - Keep answer flow coherent and text-faithful
+- "Question Type" must be "long_question"
+- "sub question type" and "sub question" must be null
+- Options and Correct Option must be null
+- "Explanation" must be null
 
 QUESTION DISTRIBUTION:
 - Cover all major concepts
 - At least one long question per major concept cluster when possible
-- "difficulty" must be one of: "easy", "medium", "hard"
+- "Difficulty Level" must be one of: "easy", "medium", "hard"
 
 OUTPUT JSON FORMAT (STRICT):
 [
   {{
-    "question": "",
-    "answer": "",
-    "figure_reference": null,
-    "marks": 5,
-    "difficulty": "easy"
+    "Topics Name": "",
+    "Subtopic Name": null,
+    "Question Type": "long_question",
+    "Difficulty Level": "easy",
+    "Question": "",
+    "sub question type": null,
+    "sub question": null,
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "",
+    "Explanation": null
   }}
 ]
 
@@ -1121,6 +620,17 @@ CASE-BASED RULES:
 - Case context must be derived from chapter content only
 - Sub-questions must be answerable from the case and chapter text
 - Avoid unsupported assumptions and outside scenarios
+- Return FLAT rows (one row per sub-question), not nested objects
+- "Question Type" must be "case_base_question"
+- "Question" must contain the case passage (or case title + passage)
+- "sub question" must contain the sub-question text
+- "sub question type" must be one of: "mcq", "fill_in_the_blank", "short_question", "long_question"
+- If sub question type is "mcq": fill options A-D and Correct Option
+- If sub question type is not "mcq": set options A-D and Correct Option to null
+- "Answer" must be for the sub-question
+- If sub question type is "mcq" or "fill_in_the_blank": include short "Explanation"
+- Else set "Explanation" to null
+- "Difficulty Level" must match sub-question difficulty
 
 QUESTION DISTRIBUTION:
 - Cover all major concepts through multiple case sets
@@ -1128,17 +638,21 @@ QUESTION DISTRIBUTION:
 OUTPUT JSON FORMAT (STRICT):
 [
   {{
-    "case_title": "",
-    "context": "",
-    "sub_questions": [
-      {{
-        "question": "",
-        "answer": "",
-        "figure_reference": null,
-        "marks": 1,
-        "difficulty": "easy"
-      }}
-    ]
+    "Topics Name": "",
+    "Subtopic Name": null,
+    "Question Type": "case_base_question",
+    "Difficulty Level": "easy",
+    "Question": "",
+    "sub question type": "short_question",
+    "sub question": "",
+    "Question Image": null,
+    "Option A": null,
+    "Option B": null,
+    "Option C": null,
+    "Option D": null,
+    "Correct Option": null,
+    "Answer": "",
+    "Explanation": null
   }}
 ]
 
